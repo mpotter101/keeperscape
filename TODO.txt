@@ -1,0 +1,5 @@
+2023 / 06 / 07
+	[v] Basic App starts
+	[v] Router file
+	[v] Base html files defined in DESIGN.txt
+	[v] Header and Footer added from server via custom template solution

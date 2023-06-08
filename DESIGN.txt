@@ -1,0 +1,114 @@
+High Level Design
+	Groundwork:
+		Setup base Application
+		Create Router
+		Create Basic HTML Page layouts
+			+ CSS
+		Create Templating Helper Functions
+		Determine Database solution (likely arango, but tbd)
+		Look for a website style to follow
+			- Ideally something nostalgic feeling, but still convenient to navigate
+		
+	Router + Pages Needed:
+		Header + Footer partial html files
+			Sends down core libraries like jquery, threejs, and animejs
+			as well as CSS
+
+			Header bar:
+				Logged-out has a homepage button and a login/signup button
+				Logged-in version has:
+					homepage button,
+					level editor button,
+					character editor button,
+					prop editor button
+					profile button
+
+		index.html
+			Hosts what will be the main game application, dubbed BEHOLDER ONLINE
+			For now represented by a threejs rotating cube example
+
+		login-register.html
+			Hosts 2 forms for logging in or making a new account
+
+		level-editor.html
+			A page for hosting the level editor app, dubbed REBAR
+
+		character-editor.html
+			A page for hosting the character editor app, dubbed TOXIC BARREL
+
+		prop-editor.html
+			A page for hosting the prop editor, dubbed CONSTRUCTOMANCER
+		
+		surface-editor.html
+			A page for hosting surface editor, dubbed RESURFACE
+			Used as floor, wall, and ceiling textures in REBAR but with extra properties
+				e.g. a sludge texture that is animated and knows to slow characters on it
+
+		profile.html
+			A page for hosting a particular users profile
+			uses username for distinction
+			Send friend requests
+			
+		content-manager.html
+			Manage the publicity or your own content
+			Quick-load into an editor with a particular item to modify it
+			Delete content you don't want anymore
+			Unsubscribe from other people's content or view what you are subscribed to
+			
+		content-browser.html
+			Browse through public and friend content across the site. Filter by content type and/or content name
+			Subscribe to content to see it in level editor.
+			
+		profile-browser.html
+			Browse users, filter by partial or full-name searches
+			Friends are in a super-priority area above other users... maybe a sidebar?
+		
+	Editor needs:
+		All editors need to be able to import and export JSON for the sake of saving and loading.
+		
+		REBAR
+			A GZDoom-esque editor. Start with an "inverted box", a door for the entrance, and an objective gem.
+			Level needs to be manually completed before it can be made public.
+			Public levels can be navigated to from BEHOLDER ONLINE
+			
+			Allows user to draw regions using a knife tool, extrude regions, or grab and move edges or corners of regions
+				-The goal is to get a warbled look like the world of Dungeon Keeper 2.
+				
+			Level testing happens in BEHOLDER ONLINE... somehow... so I don't need to manage the game code twice.
+			
+			Can publish updates to level after its been made public without making a new level
+				-Still requires author to complete level
+				
+		TOXIC-BARREL
+			A spore-esque character editor.
+			Leans towards making "Toejam & Earl" type characters, but should be able to handle all sorts of monsters or cute characters.
+			Parts indicate stats of character.
+			All characters have:
+				Armor Class (AC), Morale Level (ML), Hit Dice (HD), THACO (To Hit armor class zero),
+				Attacks (determined by limbs or gear), Treasure Type (pick from a dropdown), race name,
+				and quirks (tbd)
+			Optionally, a character can be marked as unique
+				in which case, Hit Dice becomes Hit Points
+				and the character cannot be placed more than once in the level editor
+				Players playing as a unique character that has that unique character placed on the map will play as normal
+				
+		CONSTRUCTOMANCER
+			Allows the creation of non-functional props
+			This one may just import models into a scene to use for scaling your prop
+			Set the following:
+				collision, size, orientation, can be moved, weight (if moveable), 
+				can be destroyed, Hit Dice (if destructible), treasure type (if descrutctible),
+				and name
+		
+		RESURFACE
+			Import textures and modify how they appear in BEHOLDER ONLINE and possible affect the world.
+			Can set texture to scroll on x/y (for running water or oozing sludge) as well as scroll speed.
+			Can assign one or more texture hazards:
+				slowing: reduces speed of things moving on it by an amount. Modifier range: 0.25-0.9
+				boost: increases move speed of things moving on it by an amount. Modifier range: 1.1-2.0
+				treadmill: forces movement in direction of scroll speed, affected by orientation or region texture is applied to
+				damage: deals 1 damage every X seconds (0.25 - 5.0)
+				healing: heals 1 HP every X seconds (0.25 - 5.0)
+				bane: Reduces an attribute while standing on this texture (AC, THACO, ML, Attack Damage)
+				boon: Improves an attribute while standing on this texture (AC, THACO, ML, Attack Damage)
+				terrify: Forces morale check every X seconds (1 - 10)

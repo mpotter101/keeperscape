@@ -1,4 +1,11 @@
 2023 / 06 / 07
+	[v] Deliver CSS via template
+	[v] Style Header navbar
+	[v?] Style Footer navbar
+		not even sure what to put into this footerbar
+		but it IS styled now
+
+2023 / 06 / 07
 	[v] Basic App starts
 	[v] Router file
 	[v] Base html files defined in DESIGN.txt

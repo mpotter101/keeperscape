@@ -1,65 +1,44 @@
-import * as fs from 'fs';
 import path from 'path';
+import KeeperscapeTemplater from './KeeperscapeTemplater.js';
 
 export default class KeeperscapeRouter {
 	constructor ({directory, app}) {
 		this.directory = directory;
+		this.AddRoutesToApp (app);
+	}
+	
+	async SendPage ({req, res, localHtmlPageFilePath, tabTitle}) {
+		var navbarFileName = true ? 'logged-in-navbar.html' : 'logged-out-navbar.html';
 		
+		res.send(await KeeperscapeTemplater.GetCompiledPage ({
+			htmlPageFilePath: path.join (this.directory, localHtmlPageFilePath), 
+			templateFilePath: path.join (this.directory, '/html/partial/template.html'), 
+			navbarFilePath: path.join (this.directory, '/html/partial/' + navbarFileName), 
+			footerFilePath: path.join (this.directory, '/html/partial/footer-bar.html'),
+			tabTitle	
+		}));
+	}
+	
+	AddRoutesToApp (app) {
 		app.route ('/')
-			.get ( (req, res) => { this.SendPage (req, res, '/html/index.html', 'Beholder Online'); } );
+			.get ( (req, res) => { this.SendPage ({req, res, localHtmlPageFilePath: '/html/index.html', tabTitle: 'Beholder Online'}); });
 		
 		app.route ('/login')
-			.get ( (req, res) => { this.SendPage (req, res, '/html/login-register.html', 'Login'); } );
+			.get ( (req, res) => { this.SendPage ({req, res, localHtmlPageFilePath: '/html/login-register.html', tabTitle: 'Login'}); } );
 		
 		app.route ('/register')
 			.get ( (req, res) => { res.redirect ('/login'); } );
 		
 		app.route ('/rebar')
-			.get ( (req, res) => { this.SendPage (req, res, '/html/level-editor.html', 'REBAR'); } );
+			.get ( (req, res) => { this.SendPage ({req, res, localHtmlPageFilePath: '/html/level-editor.html', tabTitle: 'REBAR'}); } );
 		
 		app.route ('/toxicbarrel')
-			.get ( (req, res) => { this.SendPage (req, res, '/html/character-editor.html', 'TOXIC BARREL'); } );
+			.get ( (req, res) => { this.SendPage ({req, res, localHtmlPageFilePath: '/html/character-editor.html', tabTitle: 'TOXIC BARREL'}); } );
 		
 		app.route ('/constructomancer')
-			.get ( (req, res) => { this.SendPage (req, res, '/html/prop-editor.html', 'CONSTRUCTOMANCER'); } );
+			.get ( (req, res) => { this.SendPage ({req, res, localHtmlPageFilePath: '/html/prop-editor.html', tabTitle: 'CONSTRUCTOMANCER'}); } );
 		
 		app.route ('/resurface')
-			.get ( (req, res) => { this.SendPage (req, res, '/html/surface-editor.html', 'RESURFACE'); } );
-		
-	}
-		
-	GetFileTextAsync({filePath}) {
-		return new Promise( (resolve) => {
-			fs.readFile(
-				filePath,
-				'utf8',
-				(error, data) => {
-					resolve (data);
-				})
-		});
-		
-	}
-	
-	async GetCompiledPage (localFilePath, tabTitle) {
-		// Get the template
-		var template = await this.GetFileTextAsync ({filePath: path.join (this.directory, '/html/partial/template.html')});
-		// Get either the logged in or logged out navbar based on session
-		var navbarFileName = false ? 'logged-in-navbar.html' : 'logged-out-navbar.html';
-		var navbar = await this.GetFileTextAsync ({filePath: path.join (this.directory, '/html/partial/' + navbarFileName)});
-		// Get the footer
-		var footer = await this.GetFileTextAsync ({filePath: path.join (this.directory, '/html/partial/footer-bar.html')});
-		// Get the page indicated by the parameter
-		var pageContent = await this.GetFileTextAsync ({filePath: path.join (this.directory, localFilePath)});
-		
-		// Combine and return them
-		return template.replace ("{{TITLE}}", tabTitle)
-			.replace ("{{NAVBAR}}", navbar)
-			.replace ("{{BODY}}", pageContent)
-			.replace ("{{FOOTER}}", footer);
-	}
-	
-	async SendPage(req, res, localFilePath, tabTitle) {
-		// Send it
-		res.send(await this.GetCompiledPage (localFilePath, tabTitle));
+			.get ( (req, res) => { this.SendPage ({req, res, localHtmlPageFilePath: '/html/surface-editor.html', tabTitle: 'RESURFACE'}); } );
 	}
 }

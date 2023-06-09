@@ -13,7 +13,7 @@ const __dirname = path.dirname(__filename);
 let app = express();
 
 // Setup content that can be accessed on the browser
-app.use (express.static('./public'));
+app.use (express.static('./browser'));
 app.use ('/build/', express.static(path.join(__dirname, 'node_modules/three/build')));
 app.use ('/jsm/', express.static(path.join(__dirname, 'node_modules/three/examples/jsm')));
 app.use ('three', express.static(path.join(__dirname, 'node_modules/three/build/build/three.module.js')));

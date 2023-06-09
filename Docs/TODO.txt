@@ -1,3 +1,13 @@
+2023 / 06 / 08
+	[v] Update Logged-in Header navbar to use dropdowns
+		(v) Tools Dropdown
+		(v) Games Dropdown
+	[ ] Setup Arangojs on machine
+		( ) Setup DB on server boot
+		( ) Setup collections
+		( ) Handle "Already Exists" Errors
+
+
 2023 / 06 / 07
 	[v] Deliver CSS via template
 	[v] Style Header navbar

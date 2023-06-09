@@ -31,17 +31,28 @@ app.use (session ({
     cookie: { secure: false }
 }))
 
-// Pull in server components
-import KeeperscapeRouter from './KeeperscapeRouter.js';
-
-var keeperscapeRouter = new KeeperscapeRouter ({app, directory: __dirname});
 
 var ip = '0.0.0.0';
 var port = 3000;
-let requestHandler = app.listen (
-	port,
-	ip,
-	() => {
-		console.log ('Running server at ' + ip + ':' + port);
-	}
-)
+var databasePort = 3100; 
+
+import KeeperscapeRouter from './KeeperscapeRouter.js';
+var keeperscapeRouter = new KeeperscapeRouter ({app, directory: __dirname});
+
+import KeeperscapeDatabase from './KeeperscapeDatabase.js';
+var keeperscapeDatabase = new KeeperscapeDatabase({ip, port: databasePort});
+var dbSetupComplete = await keeperscapeDatabase.Boot();
+
+if (dbSetupComplete) {
+	let requestHandler = app.listen (
+		port,
+		ip,
+		() => {
+			console.log ('Running server at ' + ip + ':' + port);
+			console.log ('Running database at ' + ip + ':' + databasePort);
+		}
+	)	
+}
+else {
+	console.log ('DB Failed to setup, stopping.');	
+}

@@ -41,18 +41,14 @@ var keeperscapeRouter = new KeeperscapeRouter ({app, directory: __dirname});
 
 import KeeperscapeDatabase from './KeeperscapeDatabase.js';
 var keeperscapeDatabase = new KeeperscapeDatabase({ip, port: databasePort});
-var dbSetupComplete = await keeperscapeDatabase.Boot();
+await keeperscapeDatabase.Boot();
 
-if (dbSetupComplete) {
-	let requestHandler = app.listen (
-		port,
-		ip,
-		() => {
-			console.log ('Running server at ' + ip + ':' + port);
-			console.log ('Running database at ' + ip + ':' + databasePort);
-		}
-	)	
-}
-else {
-	console.log ('DB Failed to setup, stopping.');	
-}
+let requestHandler = app.listen (
+	port,
+	ip,
+	() => {
+		console.log ('Running server at ' + ip + ':' + port);
+		console.log ('Running database at ' + ip + ':' + databasePort);
+	}
+)	
+

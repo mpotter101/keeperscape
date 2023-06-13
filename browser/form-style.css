@@ -1,0 +1,7 @@
+form .column {
+	width: 45%;	
+}
+
+form button.column {
+	width: 100%;	
+}

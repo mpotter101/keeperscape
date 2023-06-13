@@ -31,7 +31,6 @@ app.use (session ({
     cookie: { secure: false }
 }))
 
-
 var ip = '0.0.0.0';
 var port = 3000;
 var databasePort = 3100; 

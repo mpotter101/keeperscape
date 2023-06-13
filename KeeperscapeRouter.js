@@ -8,7 +8,8 @@ export default class KeeperscapeRouter {
 	}
 	
 	async SendPage ({req, res, localHtmlPageFilePath, tabTitle}) {
-		var navbarFileName = true ? 'logged-in-navbar.html' : 'logged-out-navbar.html';
+		// TODO: Replace condition with a check for an active session
+		var navbarFileName = false ? 'logged-in-navbar.html' : 'logged-out-navbar.html';
 		
 		res.send(await KeeperscapeTemplater.GetCompiledPage ({
 			htmlPageFilePath: path.join (this.directory, localHtmlPageFilePath), 

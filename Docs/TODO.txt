@@ -1,6 +1,22 @@
 Backlog:
 	[ ] Figure out how to stop server from starting when arangod isn't running
 	[ ] Figure out how to reach arango front-end via 0.0.0.0 instead of only localhost
+	[ ] Figure out how to add noise to a three.js material to help characters pop against background
+
+2023 / 06 / 15
+	[ ] Allow user to login
+	[ ] Track session via express-session
+	[ ] Replace condition for sending the logged-out or logged-in navbar with a check for a session.
+
+2023 / 06 / 14
+	[ ] Setup error reporting on forms/fields
+	[ ] Create API endpoint so registration actually creates users in database
+		( ) Prevent same email from signing up
+		( ) Connect registration form to this endpoint
+
+2023 / 06 / 13
+	[v] Make Registration Form
+	[v] Fix style for Logged-out navbar
 
 2023 / 06 / 12
 	[v] Setup threejs spinning box demo for each tool and game

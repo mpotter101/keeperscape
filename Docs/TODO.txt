@@ -1,11 +1,23 @@
+Backlog:
+	[ ] Figure out how to stop server from starting when arangod isn't running
+	[ ] Figure out how to reach arango front-end via 0.0.0.0 instead of only localhost
+
+2023 / 06 / 12
+	[v] Setup threejs spinning box demo for each tool and game
+		(v) Beholder Online
+		(v) Toxic Barrel
+		(v) Rebar
+		(v) Constructomancer
+		(v) Resurface
+
 2023 / 06 / 08
 	[v] Update Logged-in Header navbar to use dropdowns
 		(v) Tools Dropdown
 		(v) Games Dropdown
-	[ ] Setup Arangojs on machine
-		( ) Setup DB on server boot
-		( ) Setup collections
-		( ) Handle "Already Exists" Errors
+	[v] Setup Arangojs on machine
+		(v) Setup DB on server boot
+		(v) Setup collections
+		(v) Handle "Already Exists" Errors
 
 
 2023 / 06 / 07

@@ -48,7 +48,7 @@ let requestHandler = app.listen (
 	ip,
 	() => {
 		console.log ('Running server at ' + ip + ':' + port);
-		console.log ('Running database at ' + ip + ':' + databasePort);
+		console.log ('Running database at localhost:' + databasePort);
 	}
 )	
 

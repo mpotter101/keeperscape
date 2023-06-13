@@ -5,10 +5,17 @@
 		<meta name="viewport" content="width=device-width, intial-scale=1">
 		<title>{{TITLE}}</title>
 		
-		<link rel="stylesheet" href="main-style.css">
-		<link rel="stylesheet" href="navbar-style.css">
+		<link rel="stylesheet" href="/main-style.css">
+		<link rel="stylesheet" href="/navbar-style.css">
 	</head>
 	<body>
+		<script type="importmap">
+			{
+				"imports": {
+					"three": "/build/three.module.js"
+				}
+			}
+		</script>
 		<div class="keeperscape">
 			{{NAVBAR}}
 			<div class="body-content">

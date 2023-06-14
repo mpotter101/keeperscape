@@ -39,7 +39,7 @@ import KeeperscapeRouter from './KeeperscapeRouter.js';
 var keeperscapeRouter = new KeeperscapeRouter ({app, directory: __dirname});
 
 import KeeperscapeDatabase from './KeeperscapeDatabase.js';
-var keeperscapeDatabase = new KeeperscapeDatabase({ip, port: databasePort});
+var keeperscapeDatabase = new KeeperscapeDatabase({ip, port: databasePort, app});
 await keeperscapeDatabase.Boot();
 
 let requestHandler = app.listen (

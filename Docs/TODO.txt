@@ -9,10 +9,10 @@ Backlog:
 	[ ] Replace condition for sending the logged-out or logged-in navbar with a check for a session.
 
 2023 / 06 / 14
-	[ ] Setup error reporting on forms/fields
-	[ ] Create API endpoint so registration actually creates users in database
-		( ) Prevent same email from signing up
-		( ) Connect registration form to this endpoint
+	[v] Create API endpoint so registration actually creates users in database
+		(v) Prevent same email from signing up
+		(v) Connect registration form to this endpoint
+	[v] Setup error reporting on forms/fields
 
 2023 / 06 / 13
 	[v] Make Registration Form

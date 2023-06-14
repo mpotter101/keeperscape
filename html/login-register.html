@@ -1,7 +1,7 @@
 <div class="row" style="margin: 1em;">
 	<div class="column"> 
 		Login
-		<form action="#">
+		<form action="javascript:TryLogin()">
 			<div class="row">
 				<label class="column">Username</label>
 				<input class="column" />
@@ -20,22 +20,26 @@
 	
 	<div class="column">
 		Register
-		<form action="#">
+		<form id="register" action="javascript:TryRegister()">
+			<div class="row">
+				<label class="error" id="register-error"></label>
+				<label class="success" id="register-success"></label>
+			</div>
 			<div class="row">
 				<label class="column">Email</label>
-				<input class="column"/>
+				<input name="email" class="column"/>
 			</div>
 			<div class="row">
 				<label class="column">Username</label>
-				<input class="column"/>
+				<input name="username" class="column"/>
 			</div>
 			<div class="row">
 				<label class="column">Password</label>
-				<input class="column" type="password" />
+				<input name="password" class="column" type="password" />
 			</div>
 			<div class="row">
 				<label class="column">Confirm Password</label>
-				<input class="column" type="password" />
+				<input name="confirmPassword" class="column" type="password" />
 			</div>
 			<div class="row">
 				<button class="column">Register</button>
@@ -43,3 +47,75 @@
 		</form>
 	</div>
 </div>
+
+<script>
+	function ShowMessage (node, messageList) {
+		node.html (' ');
+		messageList.forEach ((mes) => {
+			node.append ('<p>' + mes + '</p>');
+		});
+	}
+	
+	function TryLogin () {
+		console.log ('trying to login');
+	}
+	
+	function TryRegister () {
+		// get all the inputs into an array.
+		var inputs = $('#register :input');
+
+		// capture form values
+		var values = {};
+		inputs.each(function() {
+			values[this.name] = $(this).val();
+		});
+
+		var warnings = [];
+		
+		if (!values.email.includes('@')) {
+			warnings.push ('Email must be a valid email');
+		}
+		
+		if (values.password != values.confirmPassword) {
+			warnings.push ('Passwords do not match');
+		}
+		
+		// Check for blank fields
+		Object.keys (values).forEach (key => {
+			if (values [key].length == 0 && key.length) { warnings.push (key + ' cannot be blank'); }
+		});
+		
+		if (warnings.length) {
+			ShowMessage($('#register-error'), warnings);
+			return;
+		}
+
+		// remove uneeded values
+		delete values ['confirmPassword'];
+		delete values [''];
+		
+		fetch('/api/v1/register', {
+			method: 'POST',
+			headers: {
+				accept: 'application.json',
+					'Content-Type': 'application/json'
+				},
+			body: JSON.stringify (values),
+			cache: 'default'
+		})
+		.then ((response) => {
+			response.json().then((json) => {
+				if (json.error) {
+					$('#register-success').html (' ');
+					ShowMessage($('#register-error'), [json.error.message]);
+				}
+				else {
+					console.log (json);
+					$('#register-error').html (' ');
+					ShowMessage($('#register-success'), [json.success.message]);
+				}
+			});	
+		})
+		
+	}
+</script>

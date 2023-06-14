@@ -14,15 +14,17 @@ export default class KeeperscapeDatabase {
 		
 		app.route ('/api/v1/register')
 			.post (async (req, res) => {
-				console.log(req.body);
 				var newUserData = req.body;
+			
+				if (!newUserData) {
+					res.send (JSON.stringify({error: { message: 'No data received.' } }));
+					return;
+				}
 			
 				var cursor = await this.database.query(
 					'FOR u IN users FILTER u.username == "' + newUserData.username  + '" OR u.email == "' + newUserData.email + '" RETURN u'
 				);
 				var results = await cursor.all();
-				
-				console.log (results);
 			
 				if (results && results.length) {
 					res.send(JSON.stringify({error: { message: 'username or email is already in use.' } }));
@@ -39,6 +41,40 @@ export default class KeeperscapeDatabase {
 					meta => { res.send(JSON.stringify({success: {message: 'Account Created! Please try to login.'} })); },
 					err => { res.send(JSON.stringify({error: {message: 'Failed to create account', details: err} })); }
 				);
+			});
+		
+		app.route ('/api/v1/login')
+			.post (async (req, res) => {
+				var user = req.body;
+			
+				if (!user) {
+					res.send (JSON.stringify({error: { message: 'No data received.' } }));
+					return;
+				}
+			
+				var query = [
+					'FOR u IN users',
+						'FILTER LOWER(u.username) == LOWER("' + user.username + '")',
+						'LIMIT 1',
+						'return u'
+				].join ('\n');
+			
+				console.log (query);
+			
+				var cursor = await this.database.query(query);
+				var results = await cursor.all();
+			
+				if (results && results.length) {
+					var dbUser = results [0];
+					
+					if (dbUser.password == user.password) {
+						console.log ('User found! compare password', dbUser);
+						res.send(JSON.stringify({success: { message: 'logging in...' } }));
+						return;
+					}
+				}
+			
+				res.send(JSON.stringify({error: { message: 'Username or password are incorrect' } }));
 			});
 	}
 	

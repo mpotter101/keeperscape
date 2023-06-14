@@ -1,14 +1,18 @@
 <div class="row" style="margin: 1em;">
 	<div class="column"> 
 		Login
-		<form action="javascript:TryLogin()">
+		<form id="login" action="javascript:TryLogin()">
+			<div class="row">
+				<label class="error" id="login-error"></label>
+				<label class="success" id="login-success"></label>
+			</div>
 			<div class="row">
 				<label class="column">Username</label>
-				<input class="column" />
+				<input name="username" class="column" />
 			</div>
 			<div class="row">
 				<label class="column">Password</label>
-				<input class="column" type="password" />
+				<input name="password" class="column" type="password" />
 			</div>
 			<div class="row">
 				<button class="column">Login</button>
@@ -57,7 +61,43 @@
 	}
 	
 	function TryLogin () {
-		console.log ('trying to login');
+		var inputs = $('#login :input');
+
+		// capture form values
+		var values = {};
+		inputs.each(function() {
+			values[this.name] = $(this).val();
+		});
+
+		var warnings = [];
+
+		console.log (values);
+		
+		// remove uneeded values
+		delete values [''];
+		
+		fetch('/api/v1/login', {
+			method: 'POST',
+			headers: {
+				accept: 'application.json',
+					'Content-Type': 'application/json'
+				},
+			body: JSON.stringify (values),
+			cache: 'default'
+		})
+		.then ((response) => {
+			response.json().then((json) => {
+				console.log(json);
+				if (json.error) {
+					$('#login-success').html (' ');
+					ShowMessage($('#login-error'), [json.error.message]);
+				}
+				else {
+					$('#login-error').html (' ');
+					ShowMessage($('#login-success'), [json.success.message]);
+				}
+			});	
+		})
 	}
 	
 	function TryRegister () {

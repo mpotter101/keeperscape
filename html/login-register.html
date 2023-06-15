@@ -70,8 +70,6 @@
 		});
 
 		var warnings = [];
-
-		console.log (values);
 		
 		// remove uneeded values
 		delete values [''];
@@ -86,17 +84,22 @@
 			cache: 'default'
 		})
 		.then ((response) => {
-			response.json().then((json) => {
-				console.log(json);
-				if (json.error) {
-					$('#login-success').html (' ');
-					ShowMessage($('#login-error'), [json.error.message]);
-				}
-				else {
-					$('#login-error').html (' ');
-					ShowMessage($('#login-success'), [json.success.message]);
-				}
-			});	
+			if (response.status == 200) {
+				window.location.href = response.url;	
+			}
+			else {
+				response.json().then((json) => {
+					console.log(json);
+					if (json.error) {
+						$('#login-success').html (' ');
+						ShowMessage($('#login-error'), [json.error.message]);
+					}
+					else {
+						$('#login-error').html (' ');
+						ShowMessage($('#login-success'), [json.success.message]);
+					}
+				});	
+			}
 		})
 	}
 	

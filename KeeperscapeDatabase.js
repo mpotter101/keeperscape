@@ -48,6 +48,7 @@ export default class KeeperscapeDatabase {
 				var user = req.body;
 			
 				if (!user) {
+					res.status (400);
 					res.send (JSON.stringify({error: { message: 'No data received.' } }));
 					return;
 				}
@@ -59,8 +60,6 @@ export default class KeeperscapeDatabase {
 						'return u'
 				].join ('\n');
 			
-				console.log (query);
-			
 				var cursor = await this.database.query(query);
 				var results = await cursor.all();
 			
@@ -68,13 +67,18 @@ export default class KeeperscapeDatabase {
 					var dbUser = results [0];
 					
 					if (dbUser.password == user.password) {
-						console.log ('User found! compare password', dbUser);
-						res.send(JSON.stringify({success: { message: 'logging in...' } }));
+						req.session.user = {
+							username: dbUser.username,
+							displayName: dbUser.displayName,
+							avatar: dbUser.avatar
+						}
+						res.redirect ('/');
 						return;
 					}
 				}
 			
-				res.send(JSON.stringify({error: { message: 'Username or password are incorrect' } }));
+				res.status (400);
+				res.send (JSON.stringify({error: { message: 'Username or password are incorrect' } }));
 			});
 	}
 	

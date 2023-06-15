@@ -3,6 +3,29 @@ Backlog:
 	[ ] Figure out how to reach arango front-end via 0.0.0.0 instead of only localhost
 	[ ] Figure out how to add noise to a three.js material to help characters pop against background
 	[ ] Add ability to logout
+	
+Goal for 06 / 23
+	< > Can create a character in Toxic Barrel and "play" them in Beholder Online
+	
+	Not worrying about:
+		Animation
+		Sound
+		
+	Needs:
+		Toxic Barrel:
+			Scene setup
+			Parts
+				3 Head shapes
+				3 Body shapes
+				3 Limb shapes
+					? Should limbs have hands/feet built in?
+			Save Character to account
+				requires JSON export
+				
+		Beholder Online:
+			Can pick saved character from account
+			Static scene layout
+			Can see other player's characters
 
 2023 / 06 / 16
 	[v] Allow user to login

@@ -4,6 +4,12 @@ Backlog:
 	[ ] Figure out how to add noise to a three.js material to help characters pop against background
 	[ ] Add ability to logout
 	
+2023 / 06 / 18
+	[v] Setup visual scene for Toxic Barrel
+		(v) Character stand
+		(v) Suggested height range pole
+		< > BONUS: UI Elements
+	
 Goal for 06 / 23
 	< > Can create a character in Toxic Barrel and "play" them in Beholder Online
 	

@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import ThreeHelper from '/ThreeHelper.js'
+import ToxicBarrelPart from '/toxicbarrel/ToxicBarrelPart.js'
 
 export default class ToxicBarrelPartsManager {
 	constructor ({scene, camera}) {
@@ -33,42 +34,34 @@ export default class ToxicBarrelPartsManager {
 	
 	ResetEmissivesOnParts () {
 		// reset color and emissives of all parts
-		this.parts.forEach ((p) => {
-			p.material.color = p.originalColor;
-			p.material.emissive = p.originalEmissive;
-		});	
+		this.parts.forEach ((p) => { p.ResetMaterial (); });
 	}
 	
-	HighlightedPartUnderMouse (part) {
-		// Highlight part
-		try {
-			var color = part.material.color;
-			var emissive = 0x999999;
-			var material = new THREE.MeshPhongMaterial ({ color, emissive });
-			part.material = material;
-
+	HighlightedPartUnderMouse (object3D) {
+		var part;
+		
+		this.parts.forEach ((p) => { if (p.mesh == object3D) {part = p} });
+		
+		if (part) {
+			part.Highlight ();
 			this.highlightedPart = part;
-		}
-		catch (err) {
-			console.log (closest);	
 		}
 	}
 	
 	HandleClick (eventData) {
 		if (this.highlightedPart) {
+			this.UnselectPart ();
 			this.SelectPart (this.highlightedPart);
 		}
 	}
 	
 	SelectPart (part) {
-		part.material.wireframe = true;
-		this.UnselectPart ();
 		this.selectedPart = part;
 	}
 	
 	UnselectPart () {
 		if (this.selectedPart) {
-			this.selectedPart.material.wireframe = false;
+			this.selectedPart.mesh.material.wireframe = false;
 		}
 		
 		this.selectedPart = null;
@@ -76,24 +69,6 @@ export default class ToxicBarrelPartsManager {
 	
 	// Temporary code for testing other things
 	CreateBox () {
-		var width = 1;
-		var height = 1;
-		var depth = 1;
-		var color = 0xffffff;
-		var emissive = 0x555555;
-		var mesh = new THREE.Mesh(
-			new THREE.BoxGeometry (width, height, depth),
-			new THREE.MeshPhongMaterial ({ color, emissive })
-		);
-		mesh.isToxicBarrelPart = true;
-		mesh.originalColor = mesh.material.color;
-		mesh.originalEmissive = mesh.material.emissive;
-		
-		mesh.position.x = (Math.random() * 2) - 1;
-		mesh.position.y = (Math.random() * 2);
-		mesh.position.z = (Math.random() * 2) - 1;
-		
-		this.parts.push (mesh);
-		this.scene.add (mesh);
+		this.parts.push ( new ToxicBarrelPart ({scene: this.scene}) );
 	}
 }

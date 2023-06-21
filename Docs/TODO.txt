@@ -10,6 +10,7 @@ Backlog:
 	[ ] Setup way to select a spawned object
 		(v) Mouse over indication
 		( ) Currently selected indication - use outline pass post processing
+		
 	[ ] Blender-like Gizmo for moving selected element
 		( ) Move X axis
 		( ) Move Y axis
@@ -17,6 +18,7 @@ Backlog:
 		( ) Move X+Y
 		( ) Move X+Z
 		( ) Move Y+Z
+		
 	<v> Pull out scene creation code and put it into another file
 	
 2023 / 06 / 18

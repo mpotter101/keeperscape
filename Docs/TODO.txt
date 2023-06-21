@@ -1,8 +1,23 @@
 Backlog:
-	[ ] Figure out how to stop server from starting when arangod isn't running
 	[ ] Figure out how to reach arango front-end via 0.0.0.0 instead of only localhost
 	[ ] Figure out how to add noise to a three.js material to help characters pop against background
 	[ ] Add ability to logout
+	[ ] Figure out a more accurate raycasting solution
+		> Could be because the renderer dom is larger than it needs to be
+		
+2023 / 06 / 20-21
+	[v] Create function for spawning a box
+	[ ] Setup way to select a spawned object
+		(v) Mouse over indication
+		( ) Currently selected indication - use outline pass post processing
+	[ ] Blender-like Gizmo for moving selected element
+		( ) Move X axis
+		( ) Move Y axis
+		( ) Move Z axis
+		( ) Move X+Y
+		( ) Move X+Z
+		( ) Move Y+Z
+	<v> Pull out scene creation code and put it into another file
 	
 2023 / 06 / 18
 	[v] Setup visual scene for Toxic Barrel
@@ -10,7 +25,7 @@ Backlog:
 		(v) Suggested height range pole
 		< > BONUS: UI Elements
 	
-Goal for 06 / 23
+Goal for 06 / 25
 	< > Can create a character in Toxic Barrel and "play" them in Beholder Online
 	
 	Not worrying about:
@@ -37,6 +52,7 @@ Goal for 06 / 23
 	[v] Allow user to login
 	[v] Track session via express-session
 	[v] Replace condition for sending the logged-out or logged-in navbar with a check for a session.
+	[v] Figure out how to stop server from starting when arangod isn't running
 
 2023 / 06 / 15
 	[v] Connect login form to end point

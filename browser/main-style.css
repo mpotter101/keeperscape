@@ -4,4 +4,20 @@ html, body {
 	background: black;
 	color: white;
 	font-family: helvetica;
+	height: 100%;
+}
+
+.keeperscape {
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+}
+
+.navbar {
+	display: flex;
+}
+
+.body-content {
+	display: flex;
+	flex-grow: 1;
 }

@@ -15,8 +15,10 @@ export default class ToxicBarrelSceneManager {
 		);
 
 		view.renderer = new THREE.WebGLRenderer();
-		view.renderer.setSize (window.innerWidth, window.innerHeight);
-		document.body.appendChild (view.renderer.domElement);
+		//let height = box.offsetHeight;
+		var homeNode = $('.body-content');
+		view.renderer.setSize (homeNode.innerWidth (), homeNode.innerHeight ());
+		homeNode.append (view.renderer.domElement);
 
 		view.orbitControls = new OrbitControls(view.camera, view.renderer.domElement);
 		

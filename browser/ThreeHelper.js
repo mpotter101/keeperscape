@@ -36,9 +36,9 @@ export default class ThreeHelper {
 		this.events [eventName].forEach ( handler => { handler(this.eventData [eventName]); } );
 	}
 	
-	Raycast ({scene, camera}) {
+	Raycast ({scene, camera, pointer}) {
 		// update the picking ray with the camera and pointer position
-		this.raycaster.setFromCamera( this.pointer, camera );
+		this.raycaster.setFromCamera( pointer, camera );
 
 		// calculate objects intersecting the picking ray
 		return this.raycaster.intersectObjects( scene.children );
@@ -62,12 +62,13 @@ export default class ThreeHelper {
 		//var parent = $(renderer.domElement).parent();
 		// update this so it uses the height and width of its parent container
 		// without stretching the parent container
-		var innerWidth = window.innerWidth;
-		var innerHeight = window.innerHeight;
+		var node = $(renderer.domElement);
+		var innerWidth = node.innerWidth ();
+		var innerHeight = node.innerHeight ();
 		
 		camera.aspect = innerWidth / innerHeight;
 		camera.updateProjectionMatrix ();
 
-		renderer.setSize( innerWidth, innerHeight );
+		//renderer.setSize( innerWidth, innerHeight );
 	}
 }

@@ -3,23 +3,31 @@ import ThreeHelper from '/ThreeHelper.js'
 import ToxicBarrelPart from '/toxicbarrel/ToxicBarrelPart.js'
 
 export default class ToxicBarrelPartsManager {
-	constructor ({scene, camera}) {
+	constructor ({scene, camera, renderer}) {
 		this.scene = scene;
 		this.camera = camera;
+		this.renderer = renderer;
 		this.parts = [];
 		this.helper = new ThreeHelper ();
+		this.pointer = { x: 0, y: 0 };
 		
 		this.highlightedPart = null;
 		this.selectedPart = null;
 		
-		this.helper.SubscribeToEvent ('mouseMove', (eventData) => { this.HandleMouseMove(eventData); });
-		$(window).on ('click', (eventData) => { this.HandleClick (eventData) });
+		$(window).on('mousemove', (event) => { 
+			this.pointer.x = ( event.clientX / $(this.renderer.domElement).innerWidth () ) * 2 - 1;
+			this.pointer.y = - ( event.clientY / $(this.renderer.domElement).innerHeight () ) * 2 + 1;
+			this.HandleMouseMove (); 
+		});
+		
+		$(window).on ('click', (event) => { this.HandleClick (event) });
 	}
 	
-	HandleMouseMove (eventData) {
+	HandleMouseMove () {
 		var hits = this.helper.Raycast ({
 				scene: this.scene,
-				camera: this.camera
+				camera: this.camera,
+				pointer: this.pointer
 			}).filter (item => item.object.isToxicBarrelPart == true);
 		
 		var objects = [];

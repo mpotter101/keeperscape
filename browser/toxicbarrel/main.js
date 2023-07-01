@@ -1,7 +1,15 @@
 // Because these scripts are made static by the app, 
 // I can import them without needing the script to be loaded in the html
 import * as THREE from 'three';
+// for reference
+// https://github.com/mrdoob/three.js/blob/master/examples/webgl_postprocessing_outline.html
 import { OrbitControls } from '/jsm/controls/OrbitControls.js';
+import { EffectComposer } from '/jsm/postprocessing/EffectComposer.js';
+import { ShaderPass } from '/jsm/postprocessing/ShaderPass.js';
+import { OutlinePass } from '/jsm/postprocessing/OutlinePass.js';
+import { OutputPass } from '/jsm/postprocessing/OutputPass.js';
+import { FXAAShader } from '/jsm/shaders/FXAAShader.js';
+
 import ThreeHelper from '/ThreeHelper.js';
 import ToxicBarrelSceneManager from '/toxicbarrel/ToxicBarrelSceneManager.js';
 import ToxicBarrelPartsManager from '/toxicbarrel/ToxicBarrelPartsManager.js';
@@ -41,6 +49,6 @@ function ToxicBarrel () {
 	}
 	
 	this.view = ToxicBarrelSceneManager.CreateView ();
-	this.partsManager = new ToxicBarrelPartsManager ({scene: this.view.scene, camera: this.view.camera});
+	this.partsManager = new ToxicBarrelPartsManager ({scene: this.view.scene, camera: this.view.camera, renderer: this.view.renderer});
 	this.animate ();
 }

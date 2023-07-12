@@ -62,13 +62,25 @@ export default class ThreeHelper {
 		//var parent = $(renderer.domElement).parent();
 		// update this so it uses the height and width of its parent container
 		// without stretching the parent container
-		var node = $(renderer.domElement);
+		var node = $(renderer.domElement).parent ();
 		var innerWidth = node.innerWidth ();
 		var innerHeight = node.innerHeight ();
 		
 		camera.aspect = innerWidth / innerHeight;
 		camera.updateProjectionMatrix ();
 
-		//renderer.setSize( innerWidth, innerHeight );
+		renderer.setSize( node.innerWidth (), node.innerHeight () );
+	}
+	
+	static MakeId() {
+		let result = '';
+		const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+		const charactersLength = characters.length;
+		let counter = 0;
+		while (counter < 10) {
+		  result += characters.charAt(Math.floor(Math.random() * charactersLength));
+		  counter += 1;
+		}
+		return result + Date.now ();
 	}
 }

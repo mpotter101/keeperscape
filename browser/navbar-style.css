@@ -2,6 +2,7 @@
 .navbar {
 	overflow: hidden;
 	background-color: #333;
+	min-height: 40px;
 }
 
 /* Navigation links */

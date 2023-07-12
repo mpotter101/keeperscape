@@ -10,14 +10,10 @@ html, body {
 .keeperscape {
 	display: flex;
 	flex-direction: column;
-	height: 100vh;
-}
-
-.navbar {
-	display: flex;
+	height: 100%;
 }
 
 .body-content {
-	display: flex;
 	flex-grow: 1;
+	min-height: 0;
 }

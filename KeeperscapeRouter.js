@@ -42,5 +42,8 @@ export default class KeeperscapeRouter {
 		
 		app.route ('/resurface')
 			.get ( (req, res) => { this.SendPage ({req, res, localHtmlPageFilePath: '/html/surface-editor.html', tabTitle: 'RESURFACE'}); } );
+		
+		app.route ('/runt')
+			.get ( (req, res) => { this.SendPage ({req, res, localHtmlPageFilePath: '/html/rockit-runt.html', tabTitle: 'Rock it Runt!'}); } );
 	}
 }

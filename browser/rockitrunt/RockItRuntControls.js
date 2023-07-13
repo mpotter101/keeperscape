@@ -8,7 +8,8 @@ export default class RockItRuntControls {
 		this.playerObj3d = playerObj3d // the thing to move and keep the camera relative to
 		
 		this.inputCapture = new InputCapture();
-		this.looker = new Looker();
+		this.looker = new Looker({});
+		this.mover = new Mover({});
 	}
 	
 	Update ({deltaTime}) {

@@ -1,12 +1,12 @@
 // makes something look around
 export class Looker {
-	constructor () {
+	constructor ({horizontalLookSpeed = 2, verticalLookSpeed = 1.1}) {
 		// use a camera for the player, or an object 3D for other entities
 		this.rotation = new THREE.Quaternion();
 		this.phi = 0;
 		this.theta = 0;
-		this.phiSpeed = 2;
-		this.thetaSpeed = 1.1;
+		this.phiSpeed = horizontalLookSpeed;
+		this.thetaSpeed = verticalLookSpeed;
 	}
 	
 	RotateByDelta ({deltaPointer, deltaTime}) {
@@ -30,8 +30,12 @@ export class Looker {
 
 // makes something move
 export class Mover {
-	constructor (object3D) {
+	constructor () {
+		this.position = new THREE.Vector3 ();
+	}
 	
+	WalkByDelta ({deltaPosition, deltaTime}) {
+		// moves something along x and z	
 	}
 }
 

@@ -27,8 +27,4 @@ export default class RuntPlayer {
 	Update (data) {
 		this.controls.Update (data);
 	}
-	
-	HandleMouseLock() {
-		this.viewManager.renderer.domElement.requestPointerLock ();
-	}
 }

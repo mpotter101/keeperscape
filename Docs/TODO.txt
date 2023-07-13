@@ -5,7 +5,6 @@ Backlog:
 	[ ] Figure out a more accurate raycasting solution
 		> Could be because the renderer dom is larger than it needs to be
 	[ ] Move input handling out of ThreeHelper
-	[ ] Move generic control stuff out of RockItRuntControls
 		
 Rock It Runt
 	Controls Milestone
@@ -49,8 +48,9 @@ Rock It Runt
 	
 2023 / 07 / 13
 	Rock It Runt
+	[v] Move generic control stuff out of RockItRuntControls
 	[ ] Setup basic fps movement
-		( ) Look around
+		(v) Look around
 		( ) Move relative to look without flying
 		
 2023 / 06 / 20-21

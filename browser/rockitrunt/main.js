@@ -40,6 +40,13 @@ function RockItRunt () {
 		this.cube.rotation.y += 0.01;
 	}
 	
+	var floor = new THREE.Mesh (
+		new THREE.BoxGeometry (100, 1, 100),
+		new THREE.MeshBasicMaterial ( {color: 0x77aa00} )
+	)
+	this.view.scene.add (floor);
+	floor.position.y = -1;
+	
 	this.updates = {};
 	this.updates.spinCubeUpdate = this.view.AddToUpdate(this.SpinCube);
 	

@@ -23,13 +23,24 @@ export default class ViewManager {
 		this.clock = new THREE.Clock ();
 		this.clock.start ();
 		
+		this.hasError = false;
+		
 		this.Update ();
 	}
 	
 	Update () {
+		if (this.hasError) { return; }
+		
 		requestAnimationFrame (() => {this.Update ()});
+		
 		var deltaTime = this.clock.getDelta ();
-		this.updateList.forEach ((update) => { update.method ({deltaTime}); });
+		try {
+			this.updateList.forEach ((update) => { update.method ({deltaTime}); });
+		}
+		catch (err) {
+			console.error (err);
+			this.hasError = true;
+		}
 		
 		this.renderer.render (this.scene, this.camera);
 	}

@@ -1,6 +1,8 @@
 import * as THREE from 'three';
 import ThreeHelper from '/ThreeHelper.js';
 
+import { FirstPersonControls } from '/jsm/controls/FirstPersonControls.js';
+
 export default class ViewManager {
 	constructor (node) {
 		this.updateList = [];
@@ -18,13 +20,16 @@ export default class ViewManager {
 		this.renderer.setSize (node.innerWidth (), node.innerHeight ());
 		node.append (this.renderer.domElement);
 		
+		this.clock = new THREE.Clock ();
+		this.clock.start ();
+		
 		this.Update ();
 	}
 	
 	Update () {
 		requestAnimationFrame (() => {this.Update ()});
-		
-		this.updateList.forEach ((update) => { update.method (); });
+		var deltaTime = this.clock.getDelta ();
+		this.updateList.forEach ((update) => { update.method ({deltaTime}); });
 		
 		this.renderer.render (this.scene, this.camera);
 	}

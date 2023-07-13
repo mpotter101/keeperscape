@@ -4,6 +4,54 @@ Backlog:
 	[ ] Add ability to logout
 	[ ] Figure out a more accurate raycasting solution
 		> Could be because the renderer dom is larger than it needs to be
+	[ ] Move input handling out of ThreeHelper
+	[ ] Move generic control stuff out of RockItRuntControls
+		
+Rock It Runt
+	Controls Milestone
+		[ ] Simple Collision for Runt controls
+		[ ] Add gravity
+		[ ] Add jump
+		[ ] Add double jump
+		[ ] Add crouch
+			( ) Figure out if ctrl+w can be overridden to allow crouching with default controls
+		[ ] Add melee attack
+		[ ] Add ground pound from air (crouch while in air)
+		[ ] Add small dash with kick (melee while in air)
+			( ) Hitting something propels you away and up
+	
+	Testing Milestone
+		[ ] Sandbox environment for testing mechanics
+		
+	Weapons Milestone
+		[ ] Add two guns
+			( ) using same mesh, but have different stats/names
+		[ ] Gun can be picked up
+			( ) Pick-up controls (q/e or u/o)
+		[ ] Gun can be fired
+		[ ] Gun can be thrown
+			( ) Pick up controls become throw controls for occupied hand
+	
+	Combat alpha Milestone
+		[ ] Create target dummy (probably using Runt mesh)
+		[ ] dummy reacts to damage
+		[ ] ground pound dummy causes it to drop ammo
+		
+	Combat beta Milestone
+		[ ] Create enemy mob (Under Elf)
+		[ ] Mob can shoot at player
+		[ ] Mob KO's when out of health
+		[ ] Mob fires periodically
+		[ ] Mob has faulty accuracy
+		[ ] Mob has a reaction time
+		[ ] Mob cannot shoot for a small period when melee'd
+		[ ] Mob moves periodically to avoid incoming fire
+	
+2023 / 07 / 13
+	Rock It Runt
+	[ ] Setup basic fps movement
+		( ) Look around
+		( ) Move relative to look without flying
 		
 2023 / 06 / 20-21
 	[v] Create function for spawning a box

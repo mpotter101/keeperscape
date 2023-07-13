@@ -1,7 +1,12 @@
 import * as THREE from 'three';
 import ThreeHelper from '/ThreeHelper.js';
 
+// Threejs modules
+import { FirstPersonControls } from '/jsm/controls/FirstPersonControls.js';
+
+// Rock It Runt modules
 import ViewManager from '/rockitrunt/ViewManager.js';
+import RuntPlayer from '/rockitrunt/RuntPlayer.js';
 
 $(window).on('load', () => {
 	window.THREE = THREE;
@@ -35,5 +40,9 @@ function RockItRunt () {
 		this.cube.rotation.y += 0.01;
 	}
 	
-	this.spinCubeUpdateId = this.view.AddToUpdate(this.SpinCube);
+	this.updates = {};
+	this.updates.spinCubeUpdate = this.view.AddToUpdate(this.SpinCube);
+	
+	this.runt = new RuntPlayer ({viewManager: this.view});
+	this.updates.runtUpdate = this.view.AddToUpdate((data) => { this.runt.Update (data) });
 }

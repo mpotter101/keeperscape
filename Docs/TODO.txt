@@ -46,12 +46,15 @@ Rock It Runt
 		[ ] Mob cannot shoot for a small period when melee'd
 		[ ] Mob moves periodically to avoid incoming fire
 	
+2023 / 07 / 14
+	[v] Setup basic fps movement
+		(v) Move relative to look without flying
+		
 2023 / 07 / 13
 	Rock It Runt
 	[v] Move generic control stuff out of RockItRuntControls
-	[ ] Setup basic fps movement
+	[-] Setup basic fps movement
 		(v) Look around
-		( ) Move relative to look without flying
 		
 2023 / 06 / 20-21
 	[v] Create function for spawning a box

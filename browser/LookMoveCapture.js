@@ -1,12 +1,12 @@
 // makes something look around
 export class Looker {
-	constructor ({horizontalLookSpeed = 2, verticalLookSpeed = 1.1}) {
+	constructor ({horizontalLookSpeed = 0.5, verticalLookSpeed = 0.5}) {
 		// use a camera for the player, or an object 3D for other entities
 		this.rotation = new THREE.Quaternion();
 		this.phi = 0;
 		this.theta = 0;
-		this.phiSpeed = horizontalLookSpeed;
-		this.thetaSpeed = verticalLookSpeed;
+		this.phiSpeed = 0.1;
+		this.thetaSpeed = 0.1;
 	}
 	
 	RotateByDelta ({deltaPointer, deltaTime}) {
@@ -28,14 +28,56 @@ export class Looker {
 	}
 }
 
-// makes something move
-export class Mover {
-	constructor () {
+// makes something move and jump
+export class Mover extends Looker {
+	constructor ({
+		moveSpeed = 1,
+		brakeSpeed = 1,
+		horizontalLookSpeed = 2,
+		verticalLookSpeed = 1.1
+	}) {
+		super ({horizontalLookSpeed, verticalLookSpeed});
+		
 		this.position = new THREE.Vector3 ();
+		this.velocity = new THREE.Vector3 ();
+		this.moveSpeed = moveSpeed;
+		this.brakeSpeed = brakeSpeed;
+		
+		this.inAir = false;
 	}
 	
-	WalkByDelta ({deltaPosition, deltaTime}) {
-		// moves something along x and z	
+	// These will move relative to Y rotation
+	MoveForward () { this.velocity.z = 1; }
+	MoveBackward () { this.velocity.z = -1; }
+	MoveRight () { this.velocity.x = -1; }
+	MoveLeft () { this.velocity.x = 1; }
+	
+	// Not meant to be called directly, but you can
+	MoveWithLocalVelocity ({deltaTime}) {
+		var qx = new THREE.Quaternion ();
+		qx.setFromAxisAngle (new THREE.Vector3(0, 1, 0), this.phi);
+		var forward = new THREE.Vector3(0, 0, -1); 
+		forward.applyQuaternion(qx);
+		forward.multiplyScalar(this.velocity.z * deltaTime * this.moveSpeed);
+		var left = new THREE.Vector3(-1, 0, 0); 
+		left.applyQuaternion(qx);
+		left.multiplyScalar(this.velocity.x * deltaTime * this.moveSpeed);
+		
+		this.position.add(forward);
+		this.position.add(left);
+	}
+	
+	ReduceVelocity ({deltaTime, completeStop}) {
+		// if we are not in the air, gradually reduce velocity to 0
+		if (!this.inAir) {
+			var brakePower = completeStop ? 0 : deltaTime * this.brakeSpeed;
+			this.velocity.multiplyScalar (brakePower);
+		}
+	}
+	
+	Update ({deltaTime}) {
+		this.MoveWithLocalVelocity ({deltaTime});
+		this.ReduceVelocity ({deltaTime});
 	}
 }
 
@@ -46,52 +88,48 @@ export class InputCapture {
 		this.prevPointer = new THREE.Vector2();
 		this.pointer = new THREE.Vector2();
 		
-		this.delta = new THREE.Vector2();
-		
 		window.addEventListener( 'pointermove', (event) => { this.OnPointerMove (event); } );
-	}
-	
-	OnPointerMove (event) {
-		// calculate pointer position in normalized device coordinates
-		// (-1 to +1) for both components
-		// This makes 0, 0 the center of the element
-		var pointer = { }
-		pointer.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-		pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+		window.addEventListener( 'keydown', (event) => { this.OnKeyDown (event); } );
+		window.addEventListener( 'keyup', (event) => { this.OnKeyUp (event); } );
 		
-		this.UpdateCurrentPointer ({pointer});
-		this.UpdateCurrentDelta ();
-	}
-	
-	GetPointerDelta ({
-		currentPointer = this.pointer, 
-		prevPointer = this.prevPointer
-	}) {
-		return {
-			x: currentPointer.x - prevPointer.x,
-			y: currentPointer.y - prevPointer.y
+		this.keys = {
+			down: {},
+			held: {},
+			up: {}
 		}
 	}
 	
-	Raycast ({scene, camera, pointer = this.pointer}) {
-		// update the picking ray with the camera and pointer position
-		this.raycaster.setFromCamera( pointer, camera );
-
-		// calculate objects intersecting the picking ray
-		return this.raycaster.intersectObjects( scene.children );
+	OnKeyDown (event) {
+		this.keys.down [event.key] = true;
+		this.keys.held [event.key] = true;
 	}
 	
-	UpdateCurrentPointer ({pointer}) {
+	OnKeyUp (event) {
+		delete this.keys.held [event.key];
+		this.keys.up [event.key] = true;
+	}
+	
+	OnPointerMove (event) {
+		// Tracking an invisible pointer for the purpose of getting an accurate delta
+		var pointer = new THREE.Vector2( event.movementX * 0.1, event.movementY * -0.1 );
+		
 		this.prevPointer = {...this.pointer};
-		this.pointer = pointer
+		this.pointer.add (pointer);
 	}
 	
-	UpdateCurrentDelta () {
-		this.delta = this.GetPointerDelta ({});;
+	GetDelta () {
+		return new THREE.Vector2(
+			this.pointer.x - this.prevPointer.x,
+			this.pointer.y - this.prevPointer.y
+		);
 	}
 	
 	Update () {
-		this.UpdateCurrentPointer ({pointer: this.pointer});
-		this.UpdateCurrentDelta ();
+		// update delta to zero for when the mouse doesn't move
+		this.prevPointer = {...this.pointer};
+		
+		// clear out the down and up inputs as they should only last 1 frame
+		this.keys.down = {};
+		this.keys.up = {};
 	}
 }

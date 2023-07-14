@@ -45,6 +45,8 @@ Rock It Runt
 		[ ] Mob has a reaction time
 		[ ] Mob cannot shoot for a small period when melee'd
 		[ ] Mob moves periodically to avoid incoming fire
+		[ ] Add predictive aiming to AI by getting player's movement delta and apply it to their current position
+	
 	
 2023 / 07 / 14
 	[v] Setup basic fps movement

@@ -8,7 +8,7 @@ export default class RockItRuntControls {
 		this.camera = viewManager.camera; // The thing to make look around
 		
 		this.inputCapture = new InputCapture({viewManager});
-		this.mover = new Mover({moveSpeed: 3});
+		this.mover = new Mover({moveSpeed: 10});
 		this.mover.position.z = 5;
 		this.mover.position.y = 0.5;
 		

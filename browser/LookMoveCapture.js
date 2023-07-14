@@ -32,16 +32,15 @@ export class Looker {
 export class Mover extends Looker {
 	constructor ({
 		moveSpeed = 1,
-		brakeSpeed = 1,
 		horizontalLookSpeed = 2,
 		verticalLookSpeed = 1.1
 	}) {
 		super ({horizontalLookSpeed, verticalLookSpeed});
 		
+		this.prevPosition = new THREE.Vector3 (); // used for undoing collisions
 		this.position = new THREE.Vector3 ();
 		this.velocity = new THREE.Vector3 ();
 		this.moveSpeed = moveSpeed;
-		this.brakeSpeed = brakeSpeed;
 		
 		this.inAir = false;
 	}
@@ -70,14 +69,36 @@ export class Mover extends Looker {
 	ReduceVelocity ({deltaTime, completeStop}) {
 		// if we are not in the air, gradually reduce velocity to 0
 		if (!this.inAir) {
-			var brakePower = completeStop ? 0 : deltaTime * this.brakeSpeed;
+			var brakePower = completeStop ? 0 : deltaTime;
 			this.velocity.multiplyScalar (brakePower);
 		}
 	}
 	
+	GetMovementDelta () {
+		return new THREE.Vector3 (
+			this.position.x - this.prevPosition.x,
+			this.position.y - this.prevPosition.y,
+			this.position.z - this.prevPosition.z,
+		)
+	}
+	
 	Update ({deltaTime}) {
+		this.prevPosition.copy (this.position);
 		this.MoveWithLocalVelocity ({deltaTime});
 		this.ReduceVelocity ({deltaTime});
+	}
+}
+
+export class Collider {
+	
+}
+
+// Only manipulates Y value
+export class Jumper {
+	constructor ({jumpPower = 10, gravity = 1, canDoubleJump = true}) {
+		// Using a vector3 so we can easily apply Y value to other vector3s
+		this.position = new THREE.Vector3();
+		this.velocty = new THREE.Vector3();
 	}
 }
 

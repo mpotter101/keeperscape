@@ -95,10 +95,80 @@ export class Collider {
 
 // Only manipulates Y value
 export class Jumper {
-	constructor ({jumpPower = 10, gravity = 1, canDoubleJump = true}) {
+	constructor (
+		{
+			jumpPower = 5,
+			maxFallSpeed = 0.25, 
+			fallAcceleration = 0.01,
+			jumpDurationMs = 300, 
+			numberOfJumps = 2
+		}
+	 ) {
 		// Using a vector3 so we can easily apply Y value to other vector3s
 		this.position = new THREE.Vector3();
-		this.velocty = new THREE.Vector3();
+		this.velocity = new THREE.Vector3();
+		
+		this.jumpPower = jumpPower;
+		this.jumpDurationMs = jumpDurationMs;
+		this.currentJumpTimeMs = 0;
+		this.fallAcceleration = fallAcceleration;
+		this.maxFallSpeed = maxFallSpeed;
+		this.numberOfJumps = numberOfJumps;
+		this.currentJump = 0;
+		this.jumpHeld = false;
+		this.fallSpeed = 0;
+	}
+	
+	CanBeJumping () {
+		return (
+			this.currentJumpTimeMs <= this.jumpDurationMs &&
+			this.jumpHeld
+		)
+	}
+	
+	Jump () {
+		if (!this.jumpHeld && this.currentJump < this.numberOfJumps) {
+			this.currentJump++;
+			this.currentJumpTimeMs = 0;
+			this.fallSpeed = 0;
+		}
+		
+		this.jumpHeld = true;
+	}
+	
+	StopJump () {
+		this.jumpHeld = false;
+		this.currentJumpTimeMs = 0;
+	}
+	
+	Landed () {
+		this.currentJump = 0;
+		this.currentJumpTimeMs = 0;
+		this.fallSpeed = 0;
+	}
+	
+	ApplyJumpVelocity ({deltaTime}) {
+		if (!this.CanBeJumping ()) {
+			this.fallSpeed += deltaTime * this.fallAcceleration;
+
+			if (this.fallSpeed > this.maxFallSpeed) {this.fallSpeed = this.maxFallSpeed}
+			this.velocity.y -= this.fallSpeed;
+			console.log ('falling');
+		}
+		else {
+			console.log ('jumping');
+			this.velocity.y = this.jumpPower * deltaTime
+		}
+		
+		// TEMP CODE //
+		if (this.position.y <= 0 && this.velocity.y < 0) { this.velocity.y = 0; this.Landed (); this.position.y = 0; }
+		
+		this.position.add (this.velocity);
+	}
+	
+	Update ({deltaTime}) {
+		if (this.jumpHeld) { this.currentJumpTimeMs += deltaTime * 1000; }
+		this.ApplyJumpVelocity ({deltaTime});
 	}
 }
 
@@ -120,14 +190,26 @@ export class InputCapture {
 		}
 	}
 	
+	GetEventKey (event) {
+		var key = event.key;
+		
+		if (event.code == 'Space') { key = 'Space'; }
+		
+		return key;
+	}
+	
 	OnKeyDown (event) {
-		this.keys.down [event.key] = true;
-		this.keys.held [event.key] = true;
+		var key = this.GetEventKey (event);
+		
+		this.keys.down [key] = true;
+		this.keys.held [key] = true;
 	}
 	
 	OnKeyUp (event) {
-		delete this.keys.held [event.key];
-		this.keys.up [event.key] = true;
+		var key = this.GetEventKey (event);
+		
+		delete this.keys.held [key];
+		this.keys.up [key] = true;
 	}
 	
 	OnPointerMove (event) {

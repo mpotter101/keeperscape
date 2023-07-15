@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { Looker, Mover, InputCapture} from '/LookMoveCapture.js';
+import { Looker, Mover, Jumper, InputCapture} from '/LookMoveCapture.js';
 
 // listens for input and handles moving and looking a player
 export default class RockItRuntControls {
@@ -11,6 +11,8 @@ export default class RockItRuntControls {
 		this.mover = new Mover({moveSpeed: 10});
 		this.mover.position.z = 5;
 		this.mover.position.y = 0.5;
+		
+		this.jumper = new Jumper ({});
 		
 		var canvas = this.viewManager.renderer.domElement;
 		canvas.requestPointerLock = canvas.requestPointerLock || canvas.mozRequestPointerLock;
@@ -33,6 +35,14 @@ export default class RockItRuntControls {
 		if (this.inputCapture.keys.held.d) {
 			this.mover.MoveRight ();
 		}
+		
+		if (this.inputCapture.keys.held.Space) {
+			this.jumper.Jump ();
+		}
+		if (this.inputCapture.keys.up.Space) {
+			console.log ('stopping jump');
+			this.jumper.StopJump ();
+		}
 	}
 	
 	Update ({deltaTime}) {
@@ -43,6 +53,7 @@ export default class RockItRuntControls {
 		
 		// Always update the mover so it can actually move us
 		this.mover.Update ({deltaTime});
+		this.jumper.Update ({deltaTime});
 		
 		// Update the input capture last we can actually capture input from events
 		this.inputCapture.Update ({deltaTime});
@@ -50,5 +61,6 @@ export default class RockItRuntControls {
 		// Copy over state of our mover so it updates the view
 		this.camera.quaternion.copy (this.mover.rotation);
 		this.camera.position.copy (this.mover.position);
+		this.camera.position.y = this.jumper.position.y + 0.5;
 	}
 }

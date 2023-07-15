@@ -3,7 +3,7 @@ import ThreeHelper from '/ThreeHelper.js';
 
 // Rock It Runt modules
 import ViewManager from '/ViewManager.js';
-import RuntPlayer from '/rockitrunt/RuntPlayer.js';
+import MobaControls from '/mobammo/MobaControls.js';
 
 $(window).on('load', () => {
 	window.THREE = THREE;
@@ -39,14 +39,14 @@ function RockItRunt () {
 	
 	var floor = new THREE.Mesh (
 		new THREE.BoxGeometry (100, 1, 100),
-		new THREE.MeshBasicMaterial ( {color: 0x77aa00} )
+		new THREE.MeshBasicMaterial ( {color: 0x77aa11} )
 	)
 	this.view.scene.add (floor);
 	floor.position.y = -1;
 	
 	this.updates = {};
-	this.updates.spinCubeUpdate = this.view.AddToUpdate(this.SpinCube);
+	this.updates.spinCubeUpdate = this.view.AddToUpdate (this.SpinCube);
 	
-	this.runt = new RuntPlayer ({viewManager: this.view});
-	this.updates.runtUpdate = this.view.AddToUpdate((data) => { this.runt.Update (data) });
+	this.player = new MobaControls ({viewManager: this.view});
+	this.updates.playerUpdate = this.view.AddToUpdate((data) => { this.player.Update (data) });
 }

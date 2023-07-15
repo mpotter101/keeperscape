@@ -1,8 +1,6 @@
 import * as THREE from 'three';
 import ThreeHelper from '/ThreeHelper.js';
 
-import { FirstPersonControls } from '/jsm/controls/FirstPersonControls.js';
-
 export default class ViewManager {
 	constructor (node) {
 		this.updateList = [];

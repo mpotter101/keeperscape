@@ -45,5 +45,8 @@ export default class KeeperscapeRouter {
 		
 		app.route ('/runt')
 			.get ( (req, res) => { this.SendPage ({req, res, localHtmlPageFilePath: '/html/rockit-runt.html', tabTitle: 'Rock it Runt!'}); } );
+		
+		app.route ('/moba')
+			.get ( (req, res) => { this.SendPage ({req, res, localHtmlPageFilePath: '/html/moba.html', tabTitle: 'MOBA'}); } );
 	}
 }

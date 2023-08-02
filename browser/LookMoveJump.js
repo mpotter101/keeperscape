@@ -89,48 +89,47 @@ export class Mover extends Looker {
 	}
 }
 
-export class Collider {
-	
-}
-
 // Only manipulates Y value
 export class Jumper {
-	constructor (
-		{
-			jumpPower = 5,
-			maxFallSpeed = 0.25, 
-			fallAcceleration = 0.01,
-			jumpDurationMs = 300, 
-			numberOfJumps = 2
-		}
-	 ) {
+	constructor ({
+		jumpPower = 5,
+		maxFallSpeed = 1.25, 
+		fallAcceleration = 0.1,
+		jumpDurationMs = 300, 
+		numberOfJumps = 2,
+		slowFallMod = 0.1
+	}) {
 		// Using a vector3 so we can easily apply Y value to other vector3s
 		this.position = new THREE.Vector3();
 		this.velocity = new THREE.Vector3();
-		
+
 		this.jumpPower = jumpPower;
 		this.jumpDurationMs = jumpDurationMs;
 		this.currentJumpTimeMs = 0;
 		this.fallAcceleration = fallAcceleration;
 		this.maxFallSpeed = maxFallSpeed;
 		this.numberOfJumps = numberOfJumps;
+		this.slowFallMod = slowFallMod;
 		this.currentJump = 0;
 		this.jumpHeld = false;
 		this.fallSpeed = 0;
+		this.landed = false;
 	}
 	
 	CanBeJumping () {
 		return (
 			this.currentJumpTimeMs <= this.jumpDurationMs &&
+			this.currentJump < this.numberOfJumps &&
 			this.jumpHeld
 		)
 	}
 	
 	Jump () {
 		if (!this.jumpHeld && this.currentJump < this.numberOfJumps) {
-			this.currentJump++;
 			this.currentJumpTimeMs = 0;
 			this.fallSpeed = 0;
+			this.landed = false;
+			console.log (this.currentJump);
 		}
 		
 		this.jumpHeld = true;
@@ -139,29 +138,52 @@ export class Jumper {
 	StopJump () {
 		this.jumpHeld = false;
 		this.currentJumpTimeMs = 0;
+		this.currentJump++;
 	}
 	
 	Landed () {
 		this.currentJump = 0;
 		this.currentJumpTimeMs = 0;
 		this.fallSpeed = 0;
+		this.landed = true;
+	}
+	
+	Rise (deltaTime) {
+		this.fallSpeed = 0;
+		this.velocity.y = this.jumpPower * deltaTime
+	}
+	
+	Fall (deltaTime) {
+		var maxFallSpeed = this.maxFallSpeed;
+		
+		// slow fall if holding jump
+		if (this.jumpHeld) {
+			maxFallSpeed *= this.slowFallMod
+		}
+		
+		this.fallSpeed = deltaTime * this.fallAcceleration;
+
+		this.velocity.y -= this.fallSpeed;
+		
+		if (
+			this.velocity.y < 0 &&
+			Math.abs (this.velocity.y) > maxFallSpeed
+		) { this.velocity.y = -Math.abs (maxFallSpeed) } 
 	}
 	
 	ApplyJumpVelocity ({deltaTime}) {
-		if (!this.CanBeJumping ()) {
-			this.fallSpeed += deltaTime * this.fallAcceleration;
-
-			if (this.fallSpeed > this.maxFallSpeed) {this.fallSpeed = this.maxFallSpeed}
-			this.velocity.y -= this.fallSpeed;
-			console.log ('falling');
+		if (this.CanBeJumping ()) { this.Rise (deltaTime) }
+		else { 
+			this.Fall (deltaTime) 
+			
+			// TEMP CODE //
+			if (this.position.y <= 0 && this.velocity.y < 0) {
+				this.Landed (); 
+				this.velocity.y = 0; 
+				this.position.y = 0; 
+			}
+			// TEMP CODE //
 		}
-		else {
-			console.log ('jumping');
-			this.velocity.y = this.jumpPower * deltaTime
-		}
-		
-		// TEMP CODE //
-		if (this.position.y <= 0 && this.velocity.y < 0) { this.velocity.y = 0; this.Landed (); this.position.y = 0; }
 		
 		this.position.add (this.velocity);
 	}
@@ -169,70 +191,5 @@ export class Jumper {
 	Update ({deltaTime}) {
 		if (this.jumpHeld) { this.currentJumpTimeMs += deltaTime * 1000; }
 		this.ApplyJumpVelocity ({deltaTime});
-	}
-}
-
-// keeps track of input
-export class InputCapture {
-	constructor () {
-		this.raycaster = new THREE.Raycaster ();
-		this.prevPointer = new THREE.Vector2();
-		this.pointer = new THREE.Vector2();
-		
-		window.addEventListener( 'pointermove', (event) => { this.OnPointerMove (event); } );
-		window.addEventListener( 'keydown', (event) => { this.OnKeyDown (event); } );
-		window.addEventListener( 'keyup', (event) => { this.OnKeyUp (event); } );
-		
-		this.keys = {
-			down: {},
-			held: {},
-			up: {}
-		}
-	}
-	
-	GetEventKey (event) {
-		var key = event.key;
-		
-		if (event.code == 'Space') { key = 'Space'; }
-		
-		return key;
-	}
-	
-	OnKeyDown (event) {
-		var key = this.GetEventKey (event);
-		
-		this.keys.down [key] = true;
-		this.keys.held [key] = true;
-	}
-	
-	OnKeyUp (event) {
-		var key = this.GetEventKey (event);
-		
-		delete this.keys.held [key];
-		this.keys.up [key] = true;
-	}
-	
-	OnPointerMove (event) {
-		// Tracking an invisible pointer for the purpose of getting an accurate delta
-		var pointer = new THREE.Vector2( event.movementX * 0.1, event.movementY * -0.1 );
-		
-		this.prevPointer = {...this.pointer};
-		this.pointer.add (pointer);
-	}
-	
-	GetDelta () {
-		return new THREE.Vector2(
-			this.pointer.x - this.prevPointer.x,
-			this.pointer.y - this.prevPointer.y
-		);
-	}
-	
-	Update () {
-		// update delta to zero for when the mouse doesn't move
-		this.prevPointer = {...this.pointer};
-		
-		// clear out the down and up inputs as they should only last 1 frame
-		this.keys.down = {};
-		this.keys.up = {};
 	}
 }

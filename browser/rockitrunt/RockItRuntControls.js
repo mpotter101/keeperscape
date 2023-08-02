@@ -1,5 +1,6 @@
 import * as THREE from 'three';
-import { Looker, Mover, Jumper, InputCapture} from '/LookMoveCapture.js';
+import { Looker, Mover, Jumper} from '/LookMoveJump.js';
+import InputCapture from '/InputCapture.js';
 
 // listens for input and handles moving and looking a player
 export default class RockItRuntControls {
@@ -40,22 +41,23 @@ export default class RockItRuntControls {
 			this.jumper.Jump ();
 		}
 		if (this.inputCapture.keys.up.Space) {
-			console.log ('stopping jump');
 			this.jumper.StopJump ();
 		}
 	}
 	
 	Update ({deltaTime}) {
+		// Capture input state when we are locked to the canvas
 		if (document.pointerLockElement === this.viewManager.renderer.domElement) {
 			this.mover.RotateByDelta ({deltaPointer: this.inputCapture.GetDelta (), deltaTime});
 			this.HandleControls ();
 		}
 		
+		
 		// Always update the mover so it can actually move us
 		this.mover.Update ({deltaTime});
 		this.jumper.Update ({deltaTime});
 		
-		// Update the input capture last we can actually capture input from events
+		// Handle input updates. Updating input resets state on buttons.
 		this.inputCapture.Update ({deltaTime});
 		
 		// Copy over state of our mover so it updates the view

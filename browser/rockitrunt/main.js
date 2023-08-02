@@ -4,6 +4,7 @@ import ThreeHelper from '/ThreeHelper.js';
 // Rock It Runt modules
 import ViewManager from '/ViewManager.js';
 import RuntPlayer from '/rockitrunt/RuntPlayer.js';
+import CollisionManager from '/CollisionManager.js';
 
 $(window).on('load', () => {
 	window.THREE = THREE;
@@ -37,16 +38,49 @@ function RockItRunt () {
 		this.cube.rotation.y += 0.01;
 	}
 	
-	var floor = new THREE.Mesh (
-		new THREE.BoxGeometry (100, 1, 100),
-		new THREE.MeshBasicMaterial ( {color: 0x77aa00} )
-	)
-	this.view.scene.add (floor);
-	floor.position.y = -1;
+	this.collisionManager = new CollisionManager({});
+	
+	// create a grid of 100 x 100 planes from -50,-50 to 50,50
+	// and assign register to the collision manager's hashtable
+	var startPoint = new THREE.Vector2 (-50, -50);
+	var rowsAndColumns = 10;
+	var floorSize = 10;
+	var rowIndex = 0;
+	var floors = [];
+	while (rowIndex < rowsAndColumns) {
+		var colIndex = 0;
+		while (colIndex < rowsAndColumns) {
+			var floor = new THREE.Mesh (
+				new THREE.PlaneGeometry (floorSize, floorSize),
+				new THREE.MeshBasicMaterial ( {color: 0x77aa00} )
+			)
+			
+			floor.position.x = startPoint.x + (rowIndex * floorSize);
+			floor.position.z = startPoint.y + (colIndex * floorSize);
+			floor.position.y = -1;
+			floor.quaternion.setFromAxisAngle( new THREE.Vector3( 1, 0, 0 ), -Math.PI / 2 );
+			
+			this.view.scene.add (floor);
+			
+			var floorHashTableEntity = this.collisionManager.hashTable.RegisterNewHashTableEntity ({
+				object: floor,
+				size: floorSize,
+				position: floor.position
+			});
+			
+			floors.push ({mesh: floor, floorHashTableEntity});
+			
+			colIndex++;
+		}
+		
+		rowIndex++;
+	}
 	
 	this.updates = {};
 	this.updates.spinCubeUpdate = this.view.AddToUpdate(this.SpinCube);
 	
 	this.runt = new RuntPlayer ({viewManager: this.view});
 	this.updates.runtUpdate = this.view.AddToUpdate((data) => { this.runt.Update (data) });
+	
+	
 }

@@ -28,7 +28,7 @@ export class Looker {
 	}
 }
 
-// makes something move and jump
+// makes something move along the "ground"
 export class Mover extends Looker {
 	constructor ({
 		moveSpeed = 1,
@@ -89,7 +89,7 @@ export class Mover extends Looker {
 	}
 }
 
-// Only manipulates Y value
+// Handles complex Y value movements
 export class Jumper {
 	constructor ({
 		jumpPower = 5,
@@ -97,7 +97,7 @@ export class Jumper {
 		fallAcceleration = 0.1,
 		jumpDurationMs = 300, 
 		numberOfJumps = 2,
-		slowFallMod = 0.1
+		slowFallMod = 0.1 // set to 1 to disable slow falling
 	}) {
 		// Using a vector3 so we can easily apply Y value to other vector3s
 		this.position = new THREE.Vector3();

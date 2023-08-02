@@ -16,8 +16,9 @@ class HashTableEntity {
 		this.UpdateOccupiedCells ();
 	}
 	
-	UpdateOccupiedCells () {
+	UpdateRelevantCells () {
 		this.relevantCells = this.hashTable.GetRelevantCellsForEntity (this);
+		return this.relevantCells
 	}
 }
 
@@ -46,7 +47,7 @@ export class HashTable {
 		var centerPoint = new THREE.Vector2 (hashTableEntity.position.x, hashTableEntity.position.z);
 		
 		// create a relative location that we can use as an index for getting cells
-		var relativeCenterPoint = centerPoint - this.startVector2;
+		var relativeCenterPoint = centerPoint.sub (this.startVector2);
 		
 		var startCell = new THREE.Vector2 (Math.floor (relativeCenterPoint.x - radius), Math.floor (relativeCenterPoint.y - radius));
 		var endCell = new THREE.Vector2 (Math.floor (relativeCenterPoint.x + radius), Math.floor (relativeCenterPoint.y + radius));
@@ -58,6 +59,12 @@ export class HashTable {
 		
 		endCell.x++
 		endCell.y++
+		
+		console.log ('updating cells for entity:', hashTableEntity.id)
+		console.log (radius);
+		console.log (centerPoint);
+		console.log (relativeCenterPoint);
+		console.log (startCell, endCell);
 		
 		return this.GetCellsWithinParameters ({startCell, endCell});
 	}

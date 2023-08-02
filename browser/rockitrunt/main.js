@@ -42,9 +42,9 @@ function RockItRunt () {
 	
 	// create a grid of 100 x 100 planes from -50,-50 to 50,50
 	// and assign register to the collision manager's hashtable
-	var startPoint = new THREE.Vector2 (-50, -50);
+	var startPoint = new THREE.Vector2 (-5, -5);
 	var rowsAndColumns = 10;
-	var floorSize = 10;
+	var floorSize = 1;
 	var rowIndex = 0;
 	var floors = [];
 	while (rowIndex < rowsAndColumns) {
@@ -76,10 +76,11 @@ function RockItRunt () {
 		rowIndex++;
 	}
 	
+	this.floors = floors;
 	this.updates = {};
 	this.updates.spinCubeUpdate = this.view.AddToUpdate(this.SpinCube);
 	
-	this.runt = new RuntPlayer ({viewManager: this.view});
+	this.runt = new RuntPlayer ({viewManager: this.view, collisionManager: this.collisionManager});
 	this.updates.runtUpdate = this.view.AddToUpdate((data) => { this.runt.Update (data) });
 	
 	

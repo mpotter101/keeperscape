@@ -4,7 +4,7 @@ import RockItRuntControls from '/rockitrunt/RockItRuntControls.js';
 
 // Manages input between controls, state, and visuals
 export default class RuntPlayer {
-	constructor ({viewManager}) {
+	constructor ({viewManager, collisionManager}) {
 		this.viewManager = viewManager;
 		
 		this.name = 'Runt';
@@ -17,9 +17,16 @@ export default class RuntPlayer {
 		this.mesh = new THREE.Mesh (geometry, material);
 		
 		this.controls = new RockItRuntControls ({viewManager})
+		
+		this.hashTableEntity = collisionManager.hashTable.RegisterNewHashTableEntity ({
+			position: this.controls.mover.position,
+			size: 1,
+			object: this
+		})
 	}
 	
 	Update (data) {
 		this.controls.Update (data);
+		//this.hashTable
 	}
 }

@@ -9,6 +9,8 @@ class HashTableEntity {
 		this.id = ThreeHelper.MakeId();
 		this.object = object;
 		this.relevantCells = []; // fill with vector2's
+		
+		this.UpdateRelevantCells();
 	}
 	
 	SetPosition (position) {
@@ -59,12 +61,6 @@ export class HashTable {
 		
 		endCell.x++
 		endCell.y++
-		
-		console.log ('updating cells for entity:', hashTableEntity.id)
-		console.log (radius);
-		console.log (centerPoint);
-		console.log (relativeCenterPoint);
-		console.log (startCell, endCell);
 		
 		return this.GetCellsWithinParameters ({startCell, endCell});
 	}

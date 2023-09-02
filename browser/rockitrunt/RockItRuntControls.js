@@ -18,6 +18,8 @@ export default class RockItRuntControls {
 		var canvas = this.viewManager.renderer.domElement;
 		canvas.requestPointerLock = canvas.requestPointerLock || canvas.mozRequestPointerLock;
 		$(canvas).on ('click', () => {this.viewManager.renderer.domElement.requestPointerLock()});
+		
+		this.lastFramePos = new THREE.Vector3();
 	}
 	
 	HandleControls () {
@@ -52,7 +54,6 @@ export default class RockItRuntControls {
 			this.HandleControls ();
 		}
 		
-		
 		// Always update the mover so it can actually move us
 		this.mover.Update ({deltaTime});
 		this.jumper.Update ({deltaTime});
@@ -64,5 +65,8 @@ export default class RockItRuntControls {
 		this.camera.quaternion.copy (this.mover.rotation);
 		this.camera.position.copy (this.mover.position);
 		this.camera.position.y = this.jumper.position.y + 0.5;
+		
+		//this.hasMoved = this.camera.position.distanceTo (this.lastFrame);
+		//this.lastFramePos = this.camera.position;
 	}
 }

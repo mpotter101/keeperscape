@@ -47,12 +47,15 @@ function RockItRunt () {
 	var floorSize = 1;
 	var rowIndex = 0;
 	var floors = [];
+	this.floorColor = 0x77aa00;
+	this.runtFloorColor = 0x88bb11;
+	this.runtAdjacentFloorColor = 0x88aa00;
 	while (rowIndex < rowsAndColumns) {
 		var colIndex = 0;
 		while (colIndex < rowsAndColumns) {
 			var floor = new THREE.Mesh (
 				new THREE.PlaneGeometry (floorSize, floorSize),
-				new THREE.MeshBasicMaterial ( {color: 0x77aa00} )
+				new THREE.MeshBasicMaterial ( {color: this.floorColor} )
 			)
 			
 			floor.position.x = startPoint.x + (rowIndex * floorSize);
@@ -62,13 +65,13 @@ function RockItRunt () {
 			
 			this.view.scene.add (floor);
 			
-			var floorHashTableEntity = this.collisionManager.hashTable.RegisterNewHashTableEntity ({
+			var hashTableEntity = this.collisionManager.hashTable.RegisterNewHashTableEntity ({
 				object: floor,
 				size: floorSize,
 				position: floor.position
 			});
 			
-			floors.push ({mesh: floor, floorHashTableEntity});
+			floors.push ({mesh: floor, hashTableEntity});
 			
 			colIndex++;
 		}
@@ -82,6 +85,7 @@ function RockItRunt () {
 	
 	this.runt = new RuntPlayer ({viewManager: this.view, collisionManager: this.collisionManager});
 	this.updates.runtUpdate = this.view.AddToUpdate((data) => { this.runt.Update (data) });
-	
-	
+	this.updates.changeFloorColorUpdate = this.view.AddToUpdate ((data) => {
+		// 
+	});
 }

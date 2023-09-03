@@ -4,7 +4,7 @@ import InputCapture from '/InputCapture.js';
 
 // listens for input and handles moving and looking a player
 export default class RockItRuntControls {
-	constructor ({viewManager, moveSpeed = 1}) {
+	constructor ({viewManager, moveSpeed = 10}) {
 		this.viewManager = viewManager;
 		this.camera = viewManager.camera; // The thing to make look around
 		this.inputThisFrame = false;

@@ -48,7 +48,8 @@ function RockItRunt () {
 	var rowIndex = 0;
 	var floors = [];
 	this.floorColor = 0x77aa00;
-	this.runtFloorColor = 0x88bb11;
+	this.nearbyFloorColor = 0x88bb11;
+	this.runtFloorColor = 0x88CC99;
 	while (rowIndex < rowsAndColumns) {
 		var colIndex = 0;
 		while (colIndex < rowsAndColumns) {
@@ -93,6 +94,9 @@ function RockItRunt () {
 		nearbyEntities.forEach (entity => {
 			if (this.runt.hashTableEntity.InSameCell (entity.centerCell)) {
 				entity.object.material.color.setHex (this.runtFloorColor);
+			}
+			else {
+				entity.object.material.color.setHex (this.nearbyFloorColor);
 			}
 		})
 	});

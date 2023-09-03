@@ -98,20 +98,20 @@ export class HashTable {
 	GetRelevantCellsForEntity (hashTableEntity) {
 		// using size and current position, get which cells we are currently in
 		// assume position is in the center of our size
-		var radius = hashTableEntity.size * 0.5;
+		var radius = hashTableEntity.size //* 0.5;
 		var centerPoint = new THREE.Vector2 (hashTableEntity.position.x, hashTableEntity.position.z);
 		
 		// create a relative location that we can use as an index for getting cells
 		var relativeCenterPoint = centerPoint.sub (this.startVector2);
 		
 		var centerCell = new THREE.Vector2 (Math.round (relativeCenterPoint.x), Math.round (relativeCenterPoint.y));
-		var startCell = new THREE.Vector2 (Math.round (relativeCenterPoint.x - radius), Math.round (relativeCenterPoint.y - radius));
-		var endCell = new THREE.Vector2 (Math.round (relativeCenterPoint.x + radius), Math.round (relativeCenterPoint.y + radius));
+		var startCell = new THREE.Vector2 (Math.ceil (centerCell.x - radius), Math.ceil (centerCell.y - radius));
+		var endCell = new THREE.Vector2 (Math.ceil (centerCell.x + radius), Math.ceil (centerCell.y + radius));
 		
 		// Get cells just outside of entity's actual occupied space so we can keep track 
 		// of nearby cells
-		startCell.x--
-		startCell.y--
+		//startCell.x--
+		//startCell.y--
 		
 		endCell.x++
 		endCell.y++

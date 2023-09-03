@@ -55,6 +55,8 @@ export default class InputCapture {
 	
 	GetAnyKeysDown () { return Object.keys (this.keys.down).length > 0 }
 	
+	GetAnyKeysHeld () { return Object.keys (this.keys.held).length > 0 }
+	
 	GetAnyKeysUp () { return Object.keys (this.keys.up).length > 0 }
 	
 	Update () {

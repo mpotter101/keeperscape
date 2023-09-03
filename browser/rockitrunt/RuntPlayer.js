@@ -27,6 +27,6 @@ export default class RuntPlayer {
 	
 	Update (data) {
 		this.controls.Update (data);
-		//this.hashTable
+		this.hashTableEntity.Update ({ position: this.controls.mover.position });
 	}
 }

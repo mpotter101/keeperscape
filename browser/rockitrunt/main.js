@@ -49,7 +49,6 @@ function RockItRunt () {
 	var floors = [];
 	this.floorColor = 0x77aa00;
 	this.runtFloorColor = 0x88bb11;
-	this.runtAdjacentFloorColor = 0x88aa00;
 	while (rowIndex < rowsAndColumns) {
 		var colIndex = 0;
 		while (colIndex < rowsAndColumns) {
@@ -84,8 +83,17 @@ function RockItRunt () {
 	this.updates.spinCubeUpdate = this.view.AddToUpdate(this.SpinCube);
 	
 	this.runt = new RuntPlayer ({viewManager: this.view, collisionManager: this.collisionManager});
-	this.updates.runtUpdate = this.view.AddToUpdate((data) => { this.runt.Update (data) });
-	this.updates.changeFloorColorUpdate = this.view.AddToUpdate ((data) => {
-		// 
+	this.updates.runtUpdate = this.view.AddToUpdate((data) => { 
+		this.runt.Update (data) 
+		
+		this.floors.forEach (floor => { floor.mesh.material.color.setHex (this.floorColor); })
+							
+		var nearbyEntities = this.runt.hashTableEntity.GetEntitiesInRelevantCells();
+		
+		nearbyEntities.forEach (entity => {
+			if (this.runt.hashTableEntity.InSameCell (entity.centerCell)) {
+				entity.object.material.color.setHex (this.runtFloorColor);
+			}
+		})
 	});
 }

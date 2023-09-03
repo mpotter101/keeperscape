@@ -4,6 +4,9 @@ import ThreeHelper from '/ThreeHelper.js';
 class HashTableEntity {
 	constructor ({object, position, size, hashTable}) {
 		this.position = position;
+		this.lastPosition = new THREE.Vector3();
+		this.oldCell = {x: 0, y: 0};
+		this.centerCell = {x: 0, y: 0};
 		this.size = size;
 		this.hashTable = hashTable;
 		this.id = ThreeHelper.MakeId();
@@ -11,16 +14,54 @@ class HashTableEntity {
 		this.relevantCells = []; // fill with vector2's
 		
 		this.UpdateRelevantCells();
+		this.SetPosition (position);
 	}
 	
 	SetPosition (position) {
-		this.position = position;
-		this.UpdateOccupiedCells ();
+		this.position = new THREE.Vector3 (position.x, position.y, position.z);
 	}
 	
 	UpdateRelevantCells () {
-		this.relevantCells = this.hashTable.GetRelevantCellsForEntity (this);
-		return this.relevantCells
+		this.oldCell = this.centerCell;
+		var newCellInfo = this.hashTable.GetRelevantCellsForEntity (this);
+		console.log (newCellInfo);
+		this.centerCell = newCellInfo.centerCell;
+		this.relevantCells = newCellInfo.relevantCells;
+		this.hashTable.MoveEntityToCell ({entity: this, newCell: this.centerCell, oldCell: this.oldCell});
+	}
+	
+	GetEntitiesInRelevantCells () {
+		var entities = [];
+		
+		this.relevantCells.forEach (cell => {
+			var cellEntities = this.hashTable.GetEntitiesInCell (cell)
+			cellEntities.forEach (entity => { 
+		  		if (entity.id != this.id) {
+					entities.push (entity);
+				}
+			})
+		});
+		
+		return entities;
+	}
+	
+	InSameCell (cell) {
+		return cell.x == this.centerCell.x && cell.y == this.centerCell.y
+	}
+	
+	Update (data) {
+		if ( data.position && !data.position.equals (this.position)) {
+			this.SetPosition (data.position);
+			console.log (this.lastPosition, this.position);
+		}
+		
+		if (!this.lastPosition.equals (this.position)) {
+			console.log ('here');
+			this.UpdateRelevantCells ();
+			this.lastPosition = new THREE.Vector3 (this.position);
+		}
+		
+		
 	}
 }
 
@@ -35,11 +76,26 @@ export class HashTable {
 		this.endVector2 = endVector2;
 		this.cellSize = cellSize;
 		this.hashTable = this.CreateHashTable ();
-		this.entityCollection = {};
+		this.entityCollection = [];
+	}
+	
+	MoveEntityToCell ({entity, newCell, oldCell}) {
+		var entitiesInOldCell = this.hashTable [oldCell.x] [oldCell.y];
+		var index = entitiesInOldCell.indexOf (entity);
+		
+		if (index > -1) {
+			entitiesInOldCell.splice (index, 1);
+		}
+		
+		this.hashTable [newCell.x] [newCell.y].push (entity);
 	}
 	
 	PointIsWithinHashTable (x, y) {
 		return (this.hashTable [x] && this.hashTable [x] [y])
+	}
+	
+	GetEntitiesInCell (cell) {
+		return this.hashTable [cell.x] [cell.y];
 	}
 	
 	GetRelevantCellsForEntity (hashTableEntity) {
@@ -51,8 +107,9 @@ export class HashTable {
 		// create a relative location that we can use as an index for getting cells
 		var relativeCenterPoint = centerPoint.sub (this.startVector2);
 		
-		var startCell = new THREE.Vector2 (Math.floor (relativeCenterPoint.x - radius), Math.floor (relativeCenterPoint.y - radius));
-		var endCell = new THREE.Vector2 (Math.floor (relativeCenterPoint.x + radius), Math.floor (relativeCenterPoint.y + radius));
+		var centerCell = new THREE.Vector2 (Math.ceil (relativeCenterPoint.x), Math.ceil (relativeCenterPoint.y));
+		var startCell = new THREE.Vector2 (Math.ceil (relativeCenterPoint.x - radius), Math.ceil (relativeCenterPoint.y - radius));
+		var endCell = new THREE.Vector2 (Math.ceil (relativeCenterPoint.x + radius), Math.ceil (relativeCenterPoint.y + radius));
 		
 		// Get cells just outside of entity's actual occupied space so we can keep track 
 		// of nearby cells
@@ -62,7 +119,10 @@ export class HashTable {
 		endCell.x++
 		endCell.y++
 		
-		return this.GetCellsWithinParameters ({startCell, endCell});
+		return {
+			centerCell: centerCell,
+			relevantCells: this.GetCellsWithinParameters ({startCell, endCell})
+		};
 	}
 	
 	GetCellsWithinParameters ({startCell, endCell}) {
@@ -125,7 +185,7 @@ export class HashTable {
 	
 	RegisterNewHashTableEntity ({position, size, object}) {
 		var hashTableEntity = new HashTableEntity ({object, position, size, hashTable: this});
-		this.entityCollection [hashTableEntity.id] = hashTableEntity;
+		this.entityCollection.push (Object.assign ( {id: hashTableEntity.id}, hashTableEntity));
 		return hashTableEntity;
 	}
 }

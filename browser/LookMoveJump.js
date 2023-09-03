@@ -129,7 +129,6 @@ export class Jumper {
 			this.currentJumpTimeMs = 0;
 			this.fallSpeed = 0;
 			this.landed = false;
-			console.log (this.currentJump);
 		}
 		
 		this.jumpHeld = true;

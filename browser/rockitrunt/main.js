@@ -87,10 +87,12 @@ function RockItRunt () {
 	this.updates.runtUpdate = this.view.AddToUpdate((data) => { 
 		this.runt.Update (data) 
 		
+		// Maybe need an event/or check for frames when objects leave the relevant tiles...
+		// Considering the normal use case is for only checking collisions for things nearby... maybe not
 		this.floors.forEach (floor => { floor.mesh.material.color.setHex (this.floorColor); })
-							
-		var nearbyEntities = this.runt.hashTableEntity.GetEntitiesInRelevantCells();
 		
+		// Demo for the hashtable collecting entities and setting nearby ones to a different color
+		var nearbyEntities = this.runt.hashTableEntity.GetEntitiesInRelevantCells();
 		nearbyEntities.forEach (entity => {
 			if (this.runt.hashTableEntity.InSameCell (entity.centerCell)) {
 				entity.object.material.color.setHex (this.runtFloorColor);

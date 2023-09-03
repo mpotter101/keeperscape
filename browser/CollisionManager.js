@@ -24,7 +24,6 @@ class HashTableEntity {
 	UpdateRelevantCells () {
 		this.oldCell = this.centerCell;
 		var newCellInfo = this.hashTable.GetRelevantCellsForEntity (this);
-		console.log (newCellInfo);
 		this.centerCell = newCellInfo.centerCell;
 		this.relevantCells = newCellInfo.relevantCells;
 		this.hashTable.MoveEntityToCell ({entity: this, newCell: this.centerCell, oldCell: this.oldCell});
@@ -52,11 +51,9 @@ class HashTableEntity {
 	Update (data) {
 		if ( data.position && !data.position.equals (this.position)) {
 			this.SetPosition (data.position);
-			console.log (this.lastPosition, this.position);
 		}
 		
 		if (!this.lastPosition.equals (this.position)) {
-			console.log ('here');
 			this.UpdateRelevantCells ();
 			this.lastPosition = new THREE.Vector3 (this.position);
 		}
@@ -107,9 +104,9 @@ export class HashTable {
 		// create a relative location that we can use as an index for getting cells
 		var relativeCenterPoint = centerPoint.sub (this.startVector2);
 		
-		var centerCell = new THREE.Vector2 (Math.ceil (relativeCenterPoint.x), Math.ceil (relativeCenterPoint.y));
-		var startCell = new THREE.Vector2 (Math.ceil (relativeCenterPoint.x - radius), Math.ceil (relativeCenterPoint.y - radius));
-		var endCell = new THREE.Vector2 (Math.ceil (relativeCenterPoint.x + radius), Math.ceil (relativeCenterPoint.y + radius));
+		var centerCell = new THREE.Vector2 (Math.round (relativeCenterPoint.x), Math.round (relativeCenterPoint.y));
+		var startCell = new THREE.Vector2 (Math.round (relativeCenterPoint.x - radius), Math.round (relativeCenterPoint.y - radius));
+		var endCell = new THREE.Vector2 (Math.round (relativeCenterPoint.x + radius), Math.round (relativeCenterPoint.y + radius));
 		
 		// Get cells just outside of entity's actual occupied space so we can keep track 
 		// of nearby cells

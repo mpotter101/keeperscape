@@ -53,6 +53,10 @@ export default class InputCapture {
 		);
 	}
 	
+	GetAnyKeysDown () { return Object.keys (this.keys.down).length > 0 }
+	
+	GetAnyKeysUp () { return Object.keys (this.keys.up).length > 0 }
+	
 	Update () {
 		// update delta to zero for when the mouse doesn't move
 		this.prevPointer = {...this.pointer};

@@ -4,12 +4,13 @@ import InputCapture from '/InputCapture.js';
 
 // listens for input and handles moving and looking a player
 export default class RockItRuntControls {
-	constructor ({viewManager}) {
+	constructor ({viewManager, moveSpeed = 1}) {
 		this.viewManager = viewManager;
 		this.camera = viewManager.camera; // The thing to make look around
+		this.inputThisFrame = false;
 		
 		this.inputCapture = new InputCapture({viewManager});
-		this.mover = new Mover({moveSpeed: 10});
+		this.mover = new Mover({moveSpeed: moveSpeed});
 		this.mover.position.z = 5;
 		this.mover.position.y = 0.5;
 		
@@ -48,6 +49,7 @@ export default class RockItRuntControls {
 	}
 	
 	Update ({deltaTime}) {
+		this.updateThisFrame = false;
 		// Capture input state when we are locked to the canvas
 		if (document.pointerLockElement === this.viewManager.renderer.domElement) {
 			this.mover.RotateByDelta ({deltaPointer: this.inputCapture.GetDelta (), deltaTime});

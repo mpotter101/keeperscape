@@ -12,18 +12,16 @@ export default class Player {
 		
 		this.controls = new PlayerControls ({viewManager});
 		
-		this.hashTableEntity = collisionManager.hashTable.RegisterNewHashTableEntity ({
+		var playerRadius = 0.5;
+		console.log ('Player collider:');
+		this.collider = collisionManager.CreateSphereCollider ({
 			position: this.controls.mover.position,
-			size: 1,
-			object: this
+			radius: playerRadius,
+			parent: this
 		})
 		
 		// for tracking location
-		var sphere = new THREE.Mesh( 
-			new THREE.SphereGeometry( 0.5, 8, 8 ), 
-			new THREE.MeshStandardMaterial( { color: 0xffff00, wireframe: true } ) 
-		);
-		var debugLocation = new THREE.LineSegments ( new THREE.WireframeGeometry (new THREE.SphereGeometry( 0.5, 8, 8 )) );
+		var debugLocation = new THREE.LineSegments ( new THREE.WireframeGeometry (new THREE.SphereGeometry( playerRadius, 8, 8 )) );
 		debugLocation.material.color.setHex (0x5555FF);
 		this.locationMesh = debugLocation
 		this.viewManager.scene.add (this.locationMesh);
@@ -35,7 +33,7 @@ export default class Player {
 		
 		// Only update our hashTable if the player is moving
 		if (this.controls.inputCapture.GetAnyKeysHeld ()) {
-			this.hashTableEntity.Update ({ position: this.controls.mover.position });	
+			this.collider.Update ({ position: this.controls.mover.position });	
 		}
 		
 		this.locationMesh.position.copy (this.controls.mover.position);

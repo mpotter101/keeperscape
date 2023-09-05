@@ -2,8 +2,7 @@ import * as THREE from 'three';
 import ThreeHelper from '/core/ThreeHelper.js';
 
 class HashTableEntity {
-	constructor ({object, position, radius, hashTable}) {
-		console.log (position);
+	constructor ({parent, position, radius, hashTable}) {
 		this.position = position;
 		this.lastPosition = new THREE.Vector3();
 		this.oldCell = {x: 0, y: 0};
@@ -11,7 +10,7 @@ class HashTableEntity {
 		this.radius = radius;
 		this.hashTable = hashTable;
 		this.id = ThreeHelper.MakeId();
-		this.object = object;
+		this.parent = parent;
 		this.relevantCells = []; // fill with vector2's
 		
 		this.UpdateRelevantCells();
@@ -45,7 +44,6 @@ class HashTableEntity {
 		return entities;
 	}
 	
-	// Not for use in hashtable checks or collision. This is a convenience method.
 	InSameCell (cell) {
 		return cell.x == this.centerCell.x && cell.y == this.centerCell.y
 	}
@@ -98,9 +96,9 @@ export default class HashTable {
 	}
 	
 	GetRelevantCellsForEntity (hashTableEntity) {
-		// using radius and current position, get which cells we are currently in
-		// assume position is in the center of our radius
-		var radius = hashTableEntity.radius;
+		// using size and current position, get which cells we are currently in
+		// assume position is in the center of our size
+		var radius = hashTableEntity.radius >= 1 ? radius : 1; // hash table acts weird with sizes smaller than 1.
 		var centerPoint = new THREE.Vector2 (hashTableEntity.position.x, hashTableEntity.position.z);
 		
 		// create a relative location that we can use as an index for getting cells
@@ -182,10 +180,9 @@ export default class HashTable {
 		return row;
 	}
 	
-	RegisterNewHashTableEntity ({position, size, object}) {
-		var hashTableEntity = new HashTableEntity ({object, position, size, hashTable: this});
-		this.entityCollection.push (hashTableEntity);
+	RegisterNewHashTableEntity ({position, radius, parent}) {
+		var hashTableEntity = new HashTableEntity ({parent, position, radius, hashTable: this});
+		this.entityCollection.push (Object.assign ( {id: hashTableEntity.id}, hashTableEntity));
 		return hashTableEntity;
 	}
 }
-

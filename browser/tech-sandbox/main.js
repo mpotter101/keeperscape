@@ -1,14 +1,17 @@
+// This project is to act as a "Kitchen Sink" demo.
+// It should do a little bit of everything to demonstrate how these objects are used.
+
 import * as THREE from 'three';
 import ThreeHelper from '/core/ThreeHelper.js';
 
-// Rock It Runt modules
+// Game modules
 import ViewManager from '/core/ViewManager.js';
 import Player from '/tech-sandbox/Player.js';
 import CollisionManager from '/core/CollisionManager.js';
 
 $(window).on('load', () => {
 	window.THREE = THREE;
-	window.app = new RockItRunt (); 
+	window.app = new KitchenSink (); 
 	
 	console.log (window.app);
 	console.log ('setting up resize listener');
@@ -21,7 +24,7 @@ $(window).on('load', () => {
 	});
 });
 
-function RockItRunt () {
+function KitchenSink () {
 	this.node = $('.body-content');
 	
 	this.view = new ViewManager (this.node);
@@ -65,13 +68,13 @@ function RockItRunt () {
 			
 			this.view.scene.add (floor);
 			
-			var hashTableEntity = this.collisionManager.hashTable.RegisterNewHashTableEntity ({
-				object: floor,
-				size: floorSize,
+			var collider = this.collisionManager.CreateSphereCollider ({
+				parent: floor,
+				radius: floorSize,
 				position: floor.position
 			});
 			
-			floors.push ({mesh: floor, hashTableEntity});
+			floors.push ({mesh: floor, collider});
 			
 			colIndex++;
 		}
@@ -80,10 +83,10 @@ function RockItRunt () {
 	}
 	
 	this.floors = floors;
-	this.updates = {};
-	this.updates.spinCubeUpdate = this.view.AddToUpdate(this.SpinCube);
-	
 	this.player = new Player ({viewManager: this.view, collisionManager: this.collisionManager});
+	this.updates = {};
+	
+	this.updates.spinCubeUpdate = this.view.AddToUpdate(this.SpinCube);
 	this.updates.playerUpdate = this.view.AddToUpdate((data) => { 
 		this.player.Update (data) 
 		
@@ -92,13 +95,14 @@ function RockItRunt () {
 		this.floors.forEach (floor => { floor.mesh.material.color.setHex (this.floorColor); })
 		
 		// Demo for the hashtable collecting entities and setting nearby ones to a different color
-		var nearbyEntities = this.player.hashTableEntity.GetEntitiesInRelevantCells();
+		// You shouldn't need to reach into the hashTableEntity directly for collision detecting, but showing off you can
+		var nearbyEntities = this.player.collider.hashTableEntity.GetEntitiesInRelevantCells();
 		nearbyEntities.forEach (entity => {
-			if (this.player.hashTableEntity.InSameCell (entity.centerCell)) {
-				entity.object.material.color.setHex (this.runtFloorColor);
+			if (this.player.collider.hashTableEntity.InSameCell (entity.centerCell)) {
+				entity.parent.material.color.setHex (this.runtFloorColor);
 			}
 			else {
-				entity.object.material.color.setHex (this.nearbyFloorColor);
+				entity.parent.material.color.setHex (this.nearbyFloorColor);
 			}
 		})
 	});

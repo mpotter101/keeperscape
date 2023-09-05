@@ -1,9 +1,9 @@
 import * as THREE from 'three';
-import { Looker, Mover, Jumper} from '/LookMoveJump.js';
-import InputCapture from '/InputCapture.js';
+import { Looker, Mover, Jumper} from '/core/LookMoveJump.js';
+import InputCapture from '/core/InputCapture.js';
 
 // listens for input and handles moving and looking a player
-export default class RockItRuntControls {
+export default class PlayerControls {
 	constructor ({viewManager, moveSpeed = 10}) {
 		this.viewManager = viewManager;
 		this.camera = viewManager.camera; // The thing to make look around

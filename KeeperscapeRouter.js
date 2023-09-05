@@ -31,22 +31,8 @@ export default class KeeperscapeRouter {
 		app.route ('/register')
 			.get ( (req, res) => { res.redirect ('/login'); } );
 		
-		app.route ('/rebar')
-			.get ( (req, res) => { this.SendPage ({req, res, localHtmlPageFilePath: '/html/level-editor.html', tabTitle: 'REBAR'}); } );
+		app.route ('/tech-sandbox')
+			.get ( (req, res) => { this.SendPage ({req, res, localHtmlPageFilePath: '/html/tech-sandbox.html', tabTitle: 'Tech Sandbox'}); } );
 		
-		app.route ('/toxicbarrel')
-			.get ( (req, res) => { this.SendPage ({req, res, localHtmlPageFilePath: '/html/character-editor.html', tabTitle: 'TOXIC BARREL'}); } );
-		
-		app.route ('/constructomancer')
-			.get ( (req, res) => { this.SendPage ({req, res, localHtmlPageFilePath: '/html/prop-editor.html', tabTitle: 'CONSTRUCTOMANCER'}); } );
-		
-		app.route ('/resurface')
-			.get ( (req, res) => { this.SendPage ({req, res, localHtmlPageFilePath: '/html/surface-editor.html', tabTitle: 'RESURFACE'}); } );
-		
-		app.route ('/runt')
-			.get ( (req, res) => { this.SendPage ({req, res, localHtmlPageFilePath: '/html/rockit-runt.html', tabTitle: 'Rock it Runt!'}); } );
-		
-		app.route ('/moba')
-			.get ( (req, res) => { this.SendPage ({req, res, localHtmlPageFilePath: '/html/moba.html', tabTitle: 'MOBA'}); } );
 	}
 }

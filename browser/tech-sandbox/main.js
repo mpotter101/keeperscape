@@ -1,10 +1,10 @@
 import * as THREE from 'three';
-import ThreeHelper from '/ThreeHelper.js';
+import ThreeHelper from '/core/ThreeHelper.js';
 
 // Rock It Runt modules
-import ViewManager from '/ViewManager.js';
-import RuntPlayer from '/rockitrunt/RuntPlayer.js';
-import CollisionManager from '/CollisionManager.js';
+import ViewManager from '/core/ViewManager.js';
+import Player from '/tech-sandbox/Player.js';
+import CollisionManager from '/core/CollisionManager.js';
 
 $(window).on('load', () => {
 	window.THREE = THREE;
@@ -83,18 +83,18 @@ function RockItRunt () {
 	this.updates = {};
 	this.updates.spinCubeUpdate = this.view.AddToUpdate(this.SpinCube);
 	
-	this.runt = new RuntPlayer ({viewManager: this.view, collisionManager: this.collisionManager});
-	this.updates.runtUpdate = this.view.AddToUpdate((data) => { 
-		this.runt.Update (data) 
+	this.player = new Player ({viewManager: this.view, collisionManager: this.collisionManager});
+	this.updates.playerUpdate = this.view.AddToUpdate((data) => { 
+		this.player.Update (data) 
 		
 		// Maybe need an event/or check for frames when objects leave the relevant tiles...
 		// Considering the normal use case is for only checking collisions for things nearby... maybe not
 		this.floors.forEach (floor => { floor.mesh.material.color.setHex (this.floorColor); })
 		
 		// Demo for the hashtable collecting entities and setting nearby ones to a different color
-		var nearbyEntities = this.runt.hashTableEntity.GetEntitiesInRelevantCells();
+		var nearbyEntities = this.player.hashTableEntity.GetEntitiesInRelevantCells();
 		nearbyEntities.forEach (entity => {
-			if (this.runt.hashTableEntity.InSameCell (entity.centerCell)) {
+			if (this.player.hashTableEntity.InSameCell (entity.centerCell)) {
 				entity.object.material.color.setHex (this.runtFloorColor);
 			}
 			else {

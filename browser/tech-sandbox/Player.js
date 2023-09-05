@@ -1,16 +1,16 @@
 import * as THREE from 'three';
-import ThreeHelper from '/ThreeHelper.js';
-import RockItRuntControls from '/rockitrunt/RockItRuntControls.js';
+import ThreeHelper from '/core/ThreeHelper.js';
+import PlayerControls from '/tech-sandbox/PlayerControls.js';
 
 // Manages input between controls, state, and visuals
-export default class RuntPlayer {
+export default class Player {
 	constructor ({viewManager, collisionManager}) {
 		this.viewManager = viewManager;
 		
-		this.name = 'Runt';
+		this.name = 'Player';
 		this.hp = 100;
 		
-		this.controls = new RockItRuntControls ({viewManager});
+		this.controls = new PlayerControls ({viewManager});
 		
 		this.hashTableEntity = collisionManager.hashTable.RegisterNewHashTableEntity ({
 			position: this.controls.mover.position,

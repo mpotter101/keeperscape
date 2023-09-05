@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import ThreeHelper from '/ThreeHelper.js';
+import ThreeHelper from '/core/ThreeHelper.js';
 
 class HashTableEntity {
 	constructor ({object, position, size, hashTable}) {

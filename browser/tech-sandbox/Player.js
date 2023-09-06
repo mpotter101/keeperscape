@@ -35,6 +35,8 @@ export default class Player {
 				// https://stackoverflow.com/questions/18347287/how-would-i-move-an-object-directly-away-from-the-camera-in-the-camera-direction
 				var direction = this.controls.mover.position.clone().sub( hashTableEntity.position ).normalize();
 				this.controls.AddPosition(direction.clone().multiplyScalar(collisionInfo.overlap));
+				
+				// A little tedious, but we need to manually update our collider each time we move.
 				this.collider.SetPosition (this.controls.GetPosition());
 			}
 		});

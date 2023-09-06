@@ -8,7 +8,7 @@ export default class PlayerControls {
 		this.viewManager = viewManager;
 		this.camera = viewManager.camera; // The thing to make look around
 		this.inputThisFrame = false;
-		
+		this.moveSpeed = moveSpeed;
 		this.inputCapture = new InputCapture({viewManager});
 		this.mover = new Mover({moveSpeed: moveSpeed});
 		this.mover.position.z = 5;
@@ -41,11 +41,34 @@ export default class PlayerControls {
 		}
 		
 		if (this.inputCapture.keys.held.Space) {
-			this.jumper.Jump ();
+			//this.jumper.Jump ();
 		}
 		if (this.inputCapture.keys.up.Space) {
-			this.jumper.StopJump ();
+			//this.jumper.StopJump ();
 		}
+	}
+	
+	AddPosition (vector3) {
+		this.mover.position.x += vector3.x;
+		//this.jumper.position.y += vector3.y;
+		this.mover.position.z += vector3.z;
+	}
+	
+	GetPosition () {
+		return new THREE.Vector3(this.mover.position.x, this.jumper.position.y, this.mover.position.z);
+	}
+	
+	SetPosition (vector3) {
+		this.mover.position.x = vector3.x;
+		this.jumper.position.y = vector3.y;
+		this.mover.position.z = vector3.z;
+	}
+	
+	UpdateCameraPosition () {
+	// Copy over state of our mover so it updates the view
+		this.camera.quaternion.copy (this.mover.rotation);
+		this.camera.position.copy (this.mover.position);
+		this.camera.position.y = this.jumper.position.y + 0.5;	
 	}
 	
 	Update ({deltaTime}) {
@@ -62,11 +85,6 @@ export default class PlayerControls {
 		
 		// Handle input updates. Updating input resets state on buttons.
 		this.inputCapture.Update ({deltaTime});
-		
-		// Copy over state of our mover so it updates the view
-		this.camera.quaternion.copy (this.mover.rotation);
-		this.camera.position.copy (this.mover.position);
-		this.camera.position.y = this.jumper.position.y + 0.5;
 		
 		//this.hasMoved = this.camera.position.distanceTo (this.lastFrame);
 		//this.lastFramePos = this.camera.position;

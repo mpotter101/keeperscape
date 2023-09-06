@@ -14,16 +14,22 @@ export class Collider {
 		var entities = this.hashTableEntity.GetEntitiesInRelevantCells ();
 		
 		entities.forEach (hashTableEntity => {
-			if (this.CheckForCollision (this.hashTableEntity, hashTableEntity)) {
-				collisions.push (hashTableEntity);
+			var collisionInfo = this.CheckForCollision (hashTableEntity) 
+			if (collisionInfo.collided) {
+				collisions.push ({entity: hashTableEntity.parent, hashTableEntity:hashTableEntity, collisionInfo});
 			}
 		});
 		
 		return collisions;
 	}
 	
-	CheckForCollision (hashEntityA, hashEntityB) {
-		return hashEntityA.position.distanceTo(hashEntityB) < hashEntityA.radius + hashEntityB.radius;
+	CheckForCollision (otherhashEntity) {
+		var distance = this.hashTableEntity.position.distanceTo(otherhashEntity.position);
+		return { 
+			collided: distance < (this.hashTableEntity.radius + otherhashEntity.radius),
+			overlap: Math.abs (distance - ( this.hashTableEntity.radius + otherhashEntity.radius )),
+			distance,
+		}
 	}
 	
 	SetPosition (data) { this.hashTableEntity.SetPosition(data); }

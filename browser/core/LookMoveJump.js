@@ -145,6 +145,7 @@ export class Jumper {
 		this.currentJumpTimeMs = 0;
 		this.fallSpeed = 0;
 		this.landed = true;
+		this.velocity.y = 0;
 	}
 	
 	Rise (deltaTime) {
@@ -172,13 +173,12 @@ export class Jumper {
 	
 	ApplyJumpVelocity ({deltaTime}) {
 		if (this.CanBeJumping ()) { this.Rise (deltaTime) }
-		else { 
+		else if (!this.landed) { 
 			this.Fall (deltaTime) 
 			
 			// TEMP CODE //
 			if (this.position.y <= 0 && this.velocity.y < 0) {
 				this.Landed (); 
-				this.velocity.y = 0; 
 				this.position.y = 0; 
 			}
 			// TEMP CODE //

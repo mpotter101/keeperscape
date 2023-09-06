@@ -6,11 +6,10 @@ import PlayerControls from '/tech-sandbox/PlayerControls.js';
 export default class Player {
 	constructor ({viewManager, collisionManager}) {
 		this.viewManager = viewManager;
-		
+		this.prevPosition = new THREE.Vector3();
 		this.name = 'Player';
 		this.hp = 100;
-		
-		this.controls = new PlayerControls ({viewManager});
+		this.controls = new PlayerControls ({viewManager, moveSpeed: 10});
 		
 		var playerRadius = 0.5;
 		console.log ('Player collider:');
@@ -27,16 +26,37 @@ export default class Player {
 		this.viewManager.scene.add (this.locationMesh);
 	}
 	
+	HandleCollisions () {
+		var collisions = this.collider.GetCollisions();
+		
+		collisions.forEach (({entity, hashTableEntity, collisionInfo}) => {
+			if (entity.name == 'wall') {
+				// reset our position to our prev position
+				// need a more complex solution for this as this makes collision feel "sticky"
+				//this.controls.SetPosition (this.prevPosition);
+				
+				// taken from: 
+				// https://stackoverflow.com/questions/18347287/how-would-i-move-an-object-directly-away-from-the-camera-in-the-camera-direction
+				var direction = this.controls.mover.position.clone().sub( entity.position ).normalize();
+				this.controls.AddPosition(direction.clone().multiplyScalar(collisionInfo.overlap));
+			}
+		});
+	}
+	
 	Update (data) {
+		this.prevPosition.copy (this.controls.GetPosition());
+		
 		// Controls also update our mover, so we need to update the controls before updating out hash table location.
 		this.controls.Update (data);
 		
-		// Only update our hashTable if the player is moving
-		if (this.controls.inputCapture.GetAnyKeysHeld ()) {
-			this.collider.Update ({ position: this.controls.mover.position });	
-		}
+		this.collider.Update ({ position: this.controls.GetPosition() });	
 		
-		this.locationMesh.position.copy (this.controls.mover.position);
-		this.locationMesh.position.y = -1;
+		// After we've moved, check if we bumped into a wall and need to undo our movement
+		this.HandleCollisions ();
+		
+		// debug location mesh
+		this.locationMesh.position.copy (this.controls.GetPosition());
+		this.locationMesh.position.y -= 1;
+		this.controls.UpdateCameraPosition();
 	}
 }

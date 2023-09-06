@@ -32,6 +32,7 @@ function KitchenSink () {
 	const geometry = new THREE.BoxGeometry ( 1, 1, 1 );
 	const material = new THREE.MeshBasicMaterial ( {color: 0x777700} );
 	this.cube = new THREE.Mesh (geometry, material);
+	this.cube.name = "wall";
 	
 	this.view.scene.add (this.cube);
 	this.view.camera.position.z = 5;
@@ -73,7 +74,7 @@ function KitchenSink () {
 				radius: floorSize,
 				position: floor.position
 			});
-			
+			floor.name = 'floor' + ((colIndex + 1) * rowIndex)
 			floors.push ({mesh: floor, collider});
 			
 			colIndex++;
@@ -84,14 +85,23 @@ function KitchenSink () {
 	
 	this.floors = floors;
 	this.player = new Player ({viewManager: this.view, collisionManager: this.collisionManager});
+	this.wallCollider = this.collisionManager.CreateSphereCollider({
+		position: this.cube.position,
+		radius: 1,
+		parent: this.cube
+	});
+	
 	this.updates = {};
 	
 	this.updates.spinCubeUpdate = this.view.AddToUpdate(this.SpinCube);
 	this.updates.playerUpdate = this.view.AddToUpdate((data) => { 
 		this.player.Update (data) 
 		
+		// A lot of this could be moved to the player since the hash table manager grants access to all other objects
+		
 		// Maybe need an event/or check for frames when objects leave the relevant tiles...
 		// Considering the normal use case is for only checking collisions for things nearby... maybe not
+		this.cube.material.color.setHex (0x777700);
 		this.floors.forEach (floor => { floor.mesh.material.color.setHex (this.floorColor); })
 		
 		// Demo for the hashtable collecting entities and setting nearby ones to a different color

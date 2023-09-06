@@ -77,18 +77,27 @@ export default class HashTable {
 	}
 	
 	MoveEntityToCell ({entity, newCell, oldCell}) {
-		var entitiesInOldCell = this.hashTable [oldCell.x] [oldCell.y];
-		var index = entitiesInOldCell.indexOf (entity);
-		
-		if (index > -1) {
-			entitiesInOldCell.splice (index, 1);
+		// Don't worry about this if we  have moved off of the grid somehow
+		if (this.CellIsWithinHashTable (newCell)) {
+			// Check for moving back into the grid
+			var entitiesInOldCell = [];
+			if (this.CellIsWithinHashTable (oldCell)) {
+				entitiesInOldCell = this.hashTable [oldCell.x] [oldCell.y];
+			}
+			
+			var index = entitiesInOldCell.indexOf (entity);
+
+			if (index > -1) {
+				entitiesInOldCell.splice (index, 1);
+			}
+
+			this.hashTable [newCell.x] [newCell.y].push (entity);
 		}
 		
-		this.hashTable [newCell.x] [newCell.y].push (entity);
 	}
 	
-	PointIsWithinHashTable (x, y) {
-		return (this.hashTable [x] && this.hashTable [x] [y])
+	CellIsWithinHashTable (cell) {
+		return (this.hashTable [cell.x] && this.hashTable [cell.x] [cell.y])
 	}
 	
 	GetEntitiesInCell (cell) {
@@ -137,7 +146,7 @@ export default class HashTable {
 				while (colIndex < columns) {
 					var cellY = startCell.y + colIndex;
 					
-					if (this.PointIsWithinHashTable (cellX, cellY)) {
+					if (this.CellIsWithinHashTable ({x: cellX, y: cellY})) {
 						occupiedCells.push (new THREE.Vector2(cellX, cellY));
 					}
 					

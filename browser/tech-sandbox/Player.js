@@ -31,10 +31,6 @@ export default class Player {
 		
 		collisions.forEach (({entity, hashTableEntity, collisionInfo}) => {
 			if (entity.name == 'wall') {
-				// reset our position to our prev position
-				// need a more complex solution for this as this makes collision feel "sticky"
-				//this.controls.SetPosition (this.prevPosition);
-				
 				// taken from: 
 				// https://stackoverflow.com/questions/18347287/how-would-i-move-an-object-directly-away-from-the-camera-in-the-camera-direction
 				var direction = this.controls.mover.position.clone().sub( entity.position ).normalize();

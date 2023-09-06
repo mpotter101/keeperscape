@@ -1,9 +1,11 @@
 // keeps track of input
 export default class InputCapture {
-	constructor () {
+	constructor ({ mouseSensitivity = 0.5 }) {
 		this.raycaster = new THREE.Raycaster ();
 		this.prevPointer = new THREE.Vector2();
 		this.pointer = new THREE.Vector2();
+		this.deltaTime = 0;
+		this.mouseSensitivity = mouseSensitivity;
 		
 		window.addEventListener( 'pointermove', (event) => { this.OnPointerMove (event); } );
 		window.addEventListener( 'keydown', (event) => { this.OnKeyDown (event); } );
@@ -40,7 +42,10 @@ export default class InputCapture {
 	
 	OnPointerMove (event) {
 		// Tracking an invisible pointer for the purpose of getting an accurate delta
-		var pointer = new THREE.Vector2( event.movementX * 0.1, event.movementY * -0.1 );
+		var pointer = new THREE.Vector2( 
+			event.movementX * this.mouseSensitivity * this.deltaTime, 
+			event.movementY * -this.mouseSensitivity * this.deltaTime 
+		);
 		
 		this.prevPointer = {...this.pointer};
 		this.pointer.add (pointer);
@@ -59,7 +64,8 @@ export default class InputCapture {
 	
 	GetAnyKeysUp () { return Object.keys (this.keys.up).length > 0 }
 	
-	Update () {
+	Update ({deltaTime}) {
+		this.deltaTime = deltaTime;
 		// update delta to zero for when the mouse doesn't move
 		this.prevPointer = {...this.pointer};
 		

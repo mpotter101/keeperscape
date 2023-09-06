@@ -24,6 +24,10 @@ Backlog:
 			
 		[ ] Client Player - sends data to network manager
 		[ ] Network Entity - receives data from network manager and updates related objects
+		
+		[ ] Configurable controls
+			- mouse sensitivity
+			- Key to Action Name converter (like unity axis)
 
 	Game Needs:
 		[ ] Design for setting up character for account - could be handled on a separate web page

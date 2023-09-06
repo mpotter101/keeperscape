@@ -28,13 +28,14 @@ export default class Player {
 	
 	HandleCollisions () {
 		var collisions = this.collider.GetCollisions();
-		
 		collisions.forEach (({entity, hashTableEntity, collisionInfo}) => {
-			if (entity.name == 'wall') {
+			// since we move our player for each collision, make sure we are still colliding with objects
+			if (entity.name == 'wall' && this.collider.CheckForCollision(hashTableEntity).collided) {
 				// taken from: 
 				// https://stackoverflow.com/questions/18347287/how-would-i-move-an-object-directly-away-from-the-camera-in-the-camera-direction
-				var direction = this.controls.mover.position.clone().sub( entity.position ).normalize();
+				var direction = this.controls.mover.position.clone().sub( hashTableEntity.position ).normalize();
 				this.controls.AddPosition(direction.clone().multiplyScalar(collisionInfo.overlap));
+				this.collider.SetPosition (this.controls.GetPosition());
 			}
 		});
 	}

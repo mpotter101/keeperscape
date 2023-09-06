@@ -6,7 +6,6 @@ export class Collider {
 	constructor ({hashTableEntity, collisionManager}) {
 		this.hashTableEntity = hashTableEntity;
 		this.collisionManager = collisionManager;
-		console.log (this);
 	}
 	
 	GetCollisions () {

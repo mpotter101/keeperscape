@@ -6,12 +6,43 @@ Backlog:
 		> Could be because the renderer dom is larger than it needs to be
 	[ ] Move input handling out of ThreeHelper
 		
+2023 Sep 6
+	Ended up scrapping the shelled out project. Tools don't help when there isn't a game to build them for.
+	Updated project is based on "Old School Essentials - Advanced Fantasy" rule set.
+	
+	Core - Online Co-Op Dungeon Crawler
+	Layer 1 - Long-format rewards with some kind of in-game shop
+	Layer 2 - Support for playing from Phone (maybe different phone-specific asymmetrical classes)
+	Layer 3 - Asymmetrical Versus mode
+	Layer 4 - More relaxed ways to engage with the game
+	
+	Remaining Technical Needs:
+			// Websockets
+		[ ] Browser-side Network Manager
+		[ ] Server-side Network Manager
+			// ---
+			
+		[ ] Client Player - sends data to network manager
+		[ ] Network Entity - receives data from network manager and updates related objects
+
+	Game Needs:
+		[ ] Design for setting up character for account - could be handled on a separate web page
+			- Just needs to consist of a name and color for now.
+		[ ] Design for lobbying with players - could be handled on a separate web page that launches into the game
+			- Pick your character here
+			- See other player's selected character
+			- Ready Up + Host Force Start (whoever makes the lobby is the host)
+		[ ] Structure for game assets + anticipated pipeline (allows me to design a game specific object for easily integrating new assets)
+		
+	Need to test bringing in live2d stuff
+		
+---		
 Rock It Runt
 	Controls Milestone
-		[ ] Simple Collision for Runt controls
-		[ ] Add gravity
-		[ ] Add jump
-		[ ] Add double jump
+		[***] Simple Collision for Runt controls (ended up going above and beyond in this area.)
+		[v] Add gravity
+		[v] Add jump
+		[v] Add double jump
 		[ ] Add crouch
 			( ) Figure out if ctrl+w can be overridden to allow crouching with default controls
 		[ ] Add melee attack
@@ -20,7 +51,7 @@ Rock It Runt
 			( ) Hitting something propels you away and up
 	
 	Testing Milestone
-		[ ] Sandbox environment for testing mechanics
+		[v] Sandbox environment for testing mechanics
 		
 	Weapons Milestone
 		[ ] Add two guns

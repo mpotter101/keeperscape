@@ -46,8 +46,8 @@ function KitchenSink () {
 	
 	// create a grid of 100 x 100 planes from -50,-50 to 50,50
 	// and assign register to the collision manager's hashtable
-	var startPoint = new THREE.Vector2 (-5, -5);
-	var rowsAndColumns = 10;
+	var rowsAndColumns = 20;
+	var startPoint = new THREE.Vector2 (-rowsAndColumns * 0.5, -rowsAndColumns * 0.5);
 	var floorSize = 1;
 	var rowIndex = 0;
 	var floors = [];
@@ -87,10 +87,29 @@ function KitchenSink () {
 	this.player = new Player ({viewManager: this.view, collisionManager: this.collisionManager});
 	this.wallCollider = this.collisionManager.CreateSphereCollider({
 		position: this.cube.position,
-		radius: 1,
+		radius: 0.5,
 		parent: this.cube
 	});
 	
+	// Create a wall opposite of the player
+	this.walls = [];
+	var radius = 0.5; 
+	var walls = 1000; // at ~500,000 colliders things get wonky, but framerate is consistent! Somewhere around 1,000,000 within 10 units is when there is a noticeable drop in frame rate (but only when close enough to be in relevant cells)
+	var endPoint = new THREE.Vector2 (rowsAndColumns * 0.5, rowsAndColumns * 0.5);
+	this.backWall = new THREE.Mesh (new THREE.BoxGeometry ( rowsAndColumns, 1, 1 ), new THREE.MeshBasicMaterial ( {color: 0x777700} ));
+	this.backWall.name = 'wall';
+	this.view.scene.add (this.backWall);
+	this.backWall.position.z = -5;
+	var incrementAmount = startPoint.distanceTo(endPoint) / walls;
+	for (var i = 0; i < walls; i++) {
+		this.walls.push (this.collisionManager.CreateSphereCollider({
+			position: new THREE.Vector3(startPoint.x + (i * incrementAmount), 0, -5),
+			radius: radius,
+			parent: {name: 'wall'}
+		}));
+	}
+	
+	// Setup update stuff for demo
 	this.updates = {};
 	
 	this.updates.spinCubeUpdate = this.view.AddToUpdate(this.SpinCube);
@@ -108,11 +127,13 @@ function KitchenSink () {
 		// You shouldn't need to reach into the hashTableEntity directly for collision detecting, but showing off you can
 		var nearbyEntities = this.player.collider.hashTableEntity.GetEntitiesInRelevantCells();
 		nearbyEntities.forEach (entity => {
-			if (this.player.collider.hashTableEntity.InSameCell (entity.centerCell)) {
-				entity.parent.material.color.setHex (this.runtFloorColor);
-			}
-			else {
-				entity.parent.material.color.setHex (this.nearbyFloorColor);
+			if (entity.parent.material) {
+				if (this.player.collider.hashTableEntity.InSameCell (entity.centerCell)) {
+					entity.parent.material.color.setHex (this.runtFloorColor);
+				}
+				else {
+					entity.parent.material.color.setHex (this.nearbyFloorColor);
+				}
 			}
 		})
 	});

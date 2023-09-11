@@ -8,7 +8,6 @@ export default class KeeperscapeRouter {
 	}
 	
 	async SendPage ({req, res, localHtmlPageFilePath, tabTitle}) {
-		// TODO: Replace condition with a check for an active session
 		var hasUser = req.session.user && Object.keys (req.session.user).length;
 		var navbarFileName = hasUser ? 'logged-in-navbar.html' : 'logged-out-navbar.html';
 		
@@ -33,6 +32,9 @@ export default class KeeperscapeRouter {
 		
 		app.route ('/tech-sandbox')
 			.get ( (req, res) => { this.SendPage ({req, res, localHtmlPageFilePath: '/html/tech-sandbox.html', tabTitle: 'Tech Sandbox'}); } );
+		
+		app.route ('/incarnation')
+			.get ( (req, res) => { this.SendPage ({req, res, localHtmlPageFilePath: '/html/incarnation.html', tabTitle: 'Incarnation'}); } );
 		
 	}
 }

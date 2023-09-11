@@ -1,0 +1,322 @@
+body {
+	 background-color: #14151c;
+}
+ ::selection {
+	 background: #dad2d9;
+}
+ ::-moz-selection {
+	 background: #dad2d9;
+}
+ ::-webkit-selection {
+	 background: #dad2d9;
+}
+ .ui {
+	 background-color: #242932;
+	 color: #dad2d9;
+}
+ .ui.header {
+	 color: #dad2d9;
+}
+ .hide {
+	 display: none !important;
+	 color: transparent !important;
+}
+ .disabled {
+	 pointer-events: none;
+}
+ .invalid {
+	 border: 1px solid red !important;
+}
+ .segment.body {
+	 padding: 0;
+}
+ .ui.basic {
+	 margin-top: 0;
+}
+ .ui.page {
+	 background-color: black;
+	 height: 80vh;
+}
+ .ui.sidebar {
+	 border: solid 1px #939393;
+	 height: auto;
+}
+ .ui.sidebar.right .head, .ui.sidebar.left .head {
+	 padding: 7px;
+}
+ .ui.sidebar.right .ui.icon.button, .ui.sidebar.left .ui.icon.button {
+	 margin-top: -15px;
+	 margin-bottom: 0px;
+	 margin-right: 0px;
+	 padding: 12px;
+}
+ .ui.sidebar.left {
+	 border-left: none;
+}
+ .ui.sidebar.left .head {
+	 padding-right: 0;
+	 padding-bottom: 0;
+	 margin-bottom: 0;
+	 text-align: right;
+}
+ .ui.sidebar.right {
+	 border-right: none;
+}
+ .ui.sidebar.right .head {
+	 padding-left: 0;
+	 padding-bottom: 0;
+}
+ .ui.sidebar .ui.segment.head {
+	 background-color: #242932;
+	 color: #dad2d9;
+}
+ .ui.sidebar .ui.segment.head .ui.icon.button {
+	 border: none;
+}
+ .ui.button {
+	 background-color: #1b1a20;
+	 border: solid 1px #939393;
+	 border-radius: 0;
+	 color: #dad2d9;
+	 padding: 11px;
+	 margin-top: 7px;
+}
+ .ui.button.floated {
+	 background-color: #1b1a20;
+	 border: solid 1px #939393;
+	 position: absolute;
+	 margin-top: 0;
+	 top: 0em;
+}
+ .ui.button.floated.left {
+	 border-left: none;
+	 left: 0;
+}
+ .ui.button.floated.right {
+	 border-right: none;
+	 right: 0;
+}
+ .ui.button.floated.circular {
+	 border: solid 1px #939393;
+	 border-radius: 100%;
+	 padding: 5px;
+	 right: 1vw;
+}
+ .ui.button.floated.active {
+	 border: none;
+	 border-top: solid 1px #939393;
+}
+ .ui.button.floated:hover {
+	 background-color: #737373;
+}
+ .ui.button.compact.labeled.icon {
+	 background-color: #242932;
+	 margin-top: -3px !important;
+	 padding: 0px 5px 0px 30px !important;
+	 width: 60px;
+}
+ .ui.button.compact.labeled.icon i {
+	 color: #939393;
+}
+ .ui.button.compact.labeled.icon:hover {
+	 color: #e0e0e0;
+}
+ .ui.button.compact.labeled.icon:hover i {
+	 color: #e0e0e0;
+}
+ .ui.button.compact.labeled.icon.active {
+	 color: #e0e0e0;
+}
+ .ui.button.compact.labeled.icon.active i {
+	 color: #e0e0e0;
+}
+ .ui.icon.button {
+	 background-color: #1b1a20;
+	 border: 1px solid #939393;
+	 border-radius: 0;
+	 color: #dad2d9;
+}
+ .ui.icon.button > i {
+	 color: #dad2d9;
+}
+ .ui.icon.button:hover {
+	 background-color: #737373;
+}
+ .ui.label {
+	 background-color: #242932;
+	 color: #c6bfc5;
+}
+ .ui.label > div {
+	 display: inline-block;
+}
+ .ui.label > .property-label {
+	 float: right;
+	 text-align: center;
+	 width: 110px;
+}
+ .ui.input {
+	 background-color: #1b1a20;
+	 border: 0.3px solid #dad2d9;
+	 color: #dad2d9;
+	 padding: 0.6em;
+}
+ .ui.input-slider {
+	 display: inline-block;
+	 margin-bottom: 3px;
+}
+ .ui.input-slider .header {
+	 margin-bottom: -5px;
+}
+ .ui.input-slider input.ui.input {
+	 width: 100px;
+}
+ .ui.input-slider input[type="range"] {
+	 margin-right: 20px;
+}
+ .ui.labeled-input {
+	 display: inline-block;
+}
+ .ui.labeled-input .ui.header {
+	 margin: 0;
+}
+ .ui.labeled-input .ui.label {
+	 margin: 0;
+	 padding-left: 0;
+}
+ .ui.labeled-input input.ui.input {
+	 min-width: 100px;
+}
+ .ui.group {
+	 background-color: #242932;
+	 border: solid 1px #939393;
+	 border-radius: 0;
+	 margin-top: 8px;
+	 padding: 0;
+}
+ .ui.group > .label {
+	 height: 20px;
+	 margin: 0 -2px;
+	 margin-bottom: 10px;
+	 padding-top: 3px;
+	 text-align: center;
+}
+ .ui.group > .label > div {
+	 margin-top: -16px;
+	 border: none;
+}
+ .ui.group .content {
+	 margin: 0;
+	 padding: 0.3em 1em 1em 1em;
+}
+ .ui.tabular.menu {
+	 margin-top: -25px;
+	 margin-bottom: 7px;
+	 text-align: center;
+}
+ .ui.tabular.menu .item, .ui.tabular.menu .item.active, .ui.tabular.menu .ui.tab, .ui.tabular.menu .ui.tab.active {
+	 border-radius: 0 !important;
+	 cursor: pointer;
+	 height: 25px;
+	 color: #dad2d9;
+	 margin-top: 15px;
+}
+ .ui.tabular.menu .item.active, .ui.tabular.menu .item.active.active, .ui.tabular.menu .ui.tab.active, .ui.tabular.menu .ui.tab.active.active {
+	 background-color: #737373;
+}
+ .ui.tabular.menu .item.disabled, .ui.tabular.menu .item.active.disabled, .ui.tabular.menu .ui.tab.disabled, .ui.tabular.menu .ui.tab.active.disabled {
+	 color: #8f8d90 !important;
+	 pointer-events: none;
+}
+ .ui.tabular.menu .item:hover {
+	 background-color: #737373;
+	 border-radius: 0;
+	 color: #dad2d9;
+}
+ .tabber .ui.segment.group {
+	 padding-bottom: 12px;
+}
+ .ui.basic.tabs {
+	 height: 0;
+	 overflowx: hidden;
+	 margin: 0;
+	 padding: 0;
+	 z-index: 999999;
+}
+ input[type=range].disabled {
+	 pointer-events: none;
+	 background: #939393 !important;
+}
+ input[type=range] {
+	 -webkit-appearance: none;
+	 width: 165px;
+	 background: transparent;
+}
+ input[type=range]::-webkit-slider-thumb {
+	 -webkit-appearance: none;
+}
+ input[type=range]:focus {
+	 outline: none;
+}
+ input[type=range]::-ms-track {
+	 width: 100%;
+	 cursor: pointer;
+	 background: transparent;
+	 border-color: transparent;
+	 color: transparent;
+}
+ input[type=range]::-webkit-slider-thumb {
+	 border-radius: 100%;
+	 -webkit-appearance: none;
+	 background: #e0e0e0;
+	 height: 10px;
+	 width: 10px;
+	 margin-top: -4px;
+}
+ input[type=range]::-moz-range-thumb {
+	 border-radius: 100%;
+	 background: #e0e0e0;
+	 height: 10px;
+	 width: 10px;
+}
+ input[type=range]::-ms-thumb {
+	 border-radius: 100%;
+	 background: #e0e0e0;
+	 height: 10px;
+	 width: 10px;
+}
+ input[type=range]::-webkit-slider-runnable-track {
+	 background: #737373;
+	 height: 1px;
+}
+ input[type=range]:focus::-webkit-slider-runnable-track {
+	 background: #737373;
+	 height: 1px;
+}
+ input[type=range]::-moz-range-track {
+	 background: #737373;
+	 height: 1px;
+}
+ input[type=range]::-ms-track {
+	 background: #737373;
+	 height: 1px;
+}
+ svg {
+	 background-color: black !important;
+	 border: 1px solid #939393;
+}
+ * {
+	 font-size: 1.05em;
+}
+ text {
+	 fill: #dad2d9 !important;
+}
+ text.y-axis {
+	 text-anchor: end;
+}
+ text.x-axis {
+	 text-anchor: middle;
+}
+ text.y-axis, text.x-axis {
+	 font-size: 0.8em;
+}
+ 

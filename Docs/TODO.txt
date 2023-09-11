@@ -6,6 +6,9 @@ Backlog:
 		> Could be because the renderer dom is larger than it needs to be
 	[ ] Move input handling out of ThreeHelper
 		
+2023 Sep 11
+	[ ] Rebuild Vile Spawn character creator with new setup
+		
 2023 Sep 6
 	Ended up scrapping the shelled out project. Tools don't help when there isn't a game to build them for.
 	Updated project is based on "Old School Essentials - Advanced Fantasy" rule set.

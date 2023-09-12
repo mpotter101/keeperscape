@@ -248,13 +248,39 @@ body {
 }
 
 .ui.segment.group.canvas-form.container {
+	align-items: stretch;
 	display: flex;
 	width: 100%;
+}
+
+.ui.segment.group.canvas-form.container > * {
+	flex: 3 1 auto;
 }
 
 .ui.segment.group.canvas-form.container > .label,
 .ui.segment.group.canvas-form.container > .content{
 	display: none;
+}
+
+.ui.max-frame-count > .ui.header, 
+.ui.max-frame-count > .ui.label-input {
+	display: inline-block;
+}
+
+.ui.max-frame-count > .ui.label-input {
+	width: 3em;
+}
+
+.ui.max-frame-count > .ui.label-input input{
+	width: 100%
+}
+
+.ui.frame-selector > div {
+	display: inline-block;
+}
+
+.ui.frame-duration > div {
+	display: inline-block;
 }
 
  input[type=range].disabled {

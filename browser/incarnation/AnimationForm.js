@@ -78,6 +78,7 @@ export default class AnimationForm extends Html {
 
         this.maxFrameCountInput = new LabeledInput ({
             parent: this.node,
+            class: 'ui max-frame-count',
             onInput: (data) => { this.HandleMaxFrameCountChange (data); },
             label: { content: 'Frame Count' }
         })
@@ -86,6 +87,7 @@ export default class AnimationForm extends Html {
 
         this.frameSelector = new InputSlider ({
             parent: this.node,
+            class: 'ui frame-selector',
             onSlider: (data) => { this.HandleCurrentFrameChange (data) },
             onInput: (data) => { this.HandleCurrentFrameChange (data) },
             label: {
@@ -131,17 +133,27 @@ export default class AnimationForm extends Html {
 
         this.frameDurationInput = new LabeledInput ({
             parent: this.node,
+            class: 'ui frame-duration',
             label: { content: 'Frame 1 Duration(ms)', class: 'ui label' },
-            onInput: (data) => { this.HandleFrameDurationChange (data); }
+            onInput: (data) => { this.HandleMatchFrameDurations (data); }
         })
+        
+        this.setAllFrameDurationsButton = new Button ({
+            parent: this.node,
+            label: 'Set All Frame Durations To Match This Frame',
+            onClick: (e) => { 
+                this.HandleMatchFrameDurations();
+            }
+        });
 
         this.frameDurationInput.setValue (frameDuration);
 
+        this.groups.form.addContent (this.uploadFrameButton.node);
         this.groups.form.addContent (this.maxFrameCountInput.node);
         this.groups.form.addContent (this.frameSelector.node);
         this.groups.form.addContent (this.frameDurationInput.node);
+        this.groups.form.addContent (this.setAllFrameDurationsButton.node);
         this.groups.form.addContent (this.tipMultiUploadLabel.node);
-        this.groups.form.addContent (this.uploadFrameButton.node);
         this.groups.form.addContent (this.playPauseButton.node);
     }
 
@@ -183,6 +195,18 @@ export default class AnimationForm extends Html {
             var curFrame = this.GetCurrentFrame ();
             this.canvasManager.state.frames [curFrame].duration = data.value;
             this.state.images [this.GetCurrentFrame ()].duration = data.value;
+        }
+    }
+    
+    HandleMatchFrameDurations () {
+        if (this.CurrentFrameExists ()) {
+            var curFrame = this.GetCurrentFrame ();
+            var duration = this.canvasManager.state.frames [curFrame].duration;
+            
+            for (var key in this.canvasManager.state.frames) {
+                this.canvasManager.state.frames [key].duration = duration;
+                this.state.images [key].duration = duration;
+            }
         }
     }
 

@@ -1,13 +1,22 @@
 Backlog:
 	[ ] Figure out how to reach arango front-end via 0.0.0.0 instead of only localhost
-	[ ] Figure out how to add noise to a three.js material to help characters pop against background
 	[ ] Add ability to logout
-	[ ] Figure out a more accurate raycasting solution
-		> Could be because the renderer dom is larger than it needs to be
-	[ ] Move input handling out of ThreeHelper
 		
 2023 Sep 11
-	[ ] Rebuild Vile Spawn character creator with new setup
+	[v] Get Vile Spawn character creator working with new setup
+	[v] Rename Vile Spawn to Incarnation
+	[v] Get tool tab button to point to incarnation
+	[ ] Re-style incarnation to look better on lower-res screens
+	[ ] Fix styling issues from less to css conversion
+	[ ] Add way to save uploaded sprite to account
+	[ ] Add way to view uploaded characters on account/profile page
+	[ ] Add way to edit an uploaded character
+		> Load json back into app via some unique end-point
+			e.g. keeperscape.com/incarnation/user/[userid]/character/[characterid]
+	[ ] Update background image to look more in-line with expected graphics
+		< > Design needed for anticipated game feel
+		< > Draw new background image
+		< > Draw faux fore-ground ui
 		
 2023 Sep 6
 	Ended up scrapping the shelled out project. Tools don't help when there isn't a game to build them for.
@@ -33,19 +42,25 @@ Backlog:
 			- Key to Action Name converter (like unity axis)
 
 	Game Needs:
-		[ ] Design for setting up character for account - could be handled on a separate web page
+		[v] Design for setting up character for account - could be handled on a separate web page
 			- Just needs to consist of a name and color for now.
+			solution : re-purposing my previous spriting tool.
 		[ ] Design for lobbying with players - could be handled on a separate web page that launches into the game
 			- Pick your character here
 			- See other player's selected character
 			- Ready Up + Host Force Start (whoever makes the lobby is the host)
-		[ ] Structure for game assets + anticipated pipeline (allows me to design a game specific object for easily integrating new assets)
+		[v] Structure for game assets + anticipated pipeline (allows me to design a game specific object for easily integrating new assets)
+			for assets, can have multiple pages with the incarnation tool using different configs (and different styles)
+			to create uploaders for:
+				- static assets
+				- interactables like chests
 		
 	Need to test bringing in live2d stuff
 		
 ---		
 Rock It Runt
 	Controls Milestone
+		[v] Move input handling out of ThreeHelper
 		[***] Simple Collision for Runt controls (ended up going above and beyond in this area.)
 		[v] Add gravity
 		[v] Add jump

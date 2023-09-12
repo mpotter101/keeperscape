@@ -242,6 +242,21 @@ body {
 	 padding: 0;
 	 z-index: 999999;
 }
+
+.ui.tab.active > .label:nth-child(1) {
+	display: none;
+}
+
+.ui.segment.group.canvas-form.container {
+	display: flex;
+	width: 100%;
+}
+
+.ui.segment.group.canvas-form.container > .label,
+.ui.segment.group.canvas-form.container > .content{
+	display: none;
+}
+
  input[type=range].disabled {
 	 pointer-events: none;
 	 background: #939393 !important;

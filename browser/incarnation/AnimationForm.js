@@ -36,16 +36,22 @@ export default class AnimationForm extends Html {
         this.const.IMG_SIZE = 256;
         this.const.TIP_MULTIPLE_FRAME_UPLOAD = "You can upload multiple frames by shift clicking images. Frame count will be adjusted automatically."
 
+        this.canvasAndFormParent = new Group ({
+            class: 'ui segment group canvas-form container',
+            parent: this.node,
+            label: { content: ' ' }
+        })
+        
         this.groups = {
             canvas: new Group ({
                 class: 'ui segment group canvas preview',
-                parent: this.node,
+                parent: this.canvasAndFormParent.node,
                 label: {
                     content: 'Preview'
                 }
             }),
             form: new Group ({
-                parent: this.node,
+                parent: this.canvasAndFormParent.node,
                 class: 'ui segment group frame-form',
                 label: {
                     content: 'Frames Upload'

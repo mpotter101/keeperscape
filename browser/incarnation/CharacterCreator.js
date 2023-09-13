@@ -1,3 +1,4 @@
+import * as THREE from 'three';
 import Button from '/incarnation/component/Button.js';
 import Group from '/incarnation/component/Group.js';
 import ImageInput from '/incarnation/component/ImageInput.js';
@@ -7,9 +8,10 @@ import LabeledInput from '/incarnation/component/LabeledInput.js';
 import Canvas from '/incarnation/component/Canvas.js';
 
 class Frame {
-	constructor ({image, duration}) {
+	constructor ({image, duration, src}) {
 		this.image = image;
 		this.duration = duration;
+		this.src = src;
 	}
 }
 
@@ -36,7 +38,7 @@ class ExportableState {
 	
 	ExportData (filename) {
         var jsonFileContent = JSON.stringify (this.state, null, 4);
-        this.Download (jsonFileContent, filename, "text/plain");
+        this.Download (jsonFileContent, filename + '.json', "text/plain");
     }
 
     // Borrowd from here: http://www.4codev.com/javascript/download-save-json-content-to-local-file-in-javascript-idpx473668115863369846.html
@@ -57,6 +59,7 @@ export default class CharacterCreator {
 				currentFrame: 1,
 				currentDuration: 200,
 				frames: {},
+				characterName: '',
 			},
 		  	() => { this.Update(); }
 		);
@@ -74,6 +77,10 @@ export default class CharacterCreator {
             prop: { width: 512, height: 512 }
         });
 		this.ctx = this.canvas.node [0].getContext ('2d');
+		this.clock = new THREE.Clock ();
+		this.clock.start ();
+		this.playing = false;
+		this.frameTimer = 0;
 
 		// FORM UI
 		this.imageLoader = new ImageInput ({
@@ -90,13 +97,6 @@ export default class CharacterCreator {
 			onClick: (e) => { this.imageLoader.node.click (); }
 		})
 
-		this.maxFrameCountInput = new LabeledInput ({
-			parent: this.formNode,
-			class: 'ui max-frame-count',
-			onInput: (data) => { this.HandleMaxFrameCountChange (data); },
-			label: { content: 'Frame Count' }
-		})
-
 		this.frameSelector = new InputSlider ({
 				parent: this.formNode,
 				class: 'ui frame-selector',
@@ -109,7 +109,7 @@ export default class CharacterCreator {
 				slider: {
 					prop: {
 						min: 1,
-						max: 3,
+						max: 1,
 						value: 1
 					}
 				}
@@ -121,7 +121,7 @@ export default class CharacterCreator {
 			parent: this.formNode,
 			class: 'ui frame-duration',
 			label: { content: 'Frame 1 Duration(ms)', class: 'ui label' },
-			onInput: (data) => { this.HandleMatchFrameDurations (data); }
+			onInput: (data) => { this.ChangeCurrentFrameDuration (data); }
 		})
 
 		this.frameDurationInput.setValue (200); //ms
@@ -145,14 +145,17 @@ export default class CharacterCreator {
 		this.characterNameInput = new LabeledInput ({
 			parent: this.crudNode,
 			class: 'ui character-name',
-			onInput: (data) => {  },
+			onInput: (e) => {  },
 			label: { content: 'Character Name' }
 		})
+		
+		this.characterNameInput.setValue ('Vagrant');
+		this.state.Set ({characterName: 'Vagrant'});
 
 		this.exportFileButton = new Button ({
 			parent: this.crudNode,
 			label: 'Export JSON File',
-			onClick: (e) => {  }
+			onClick: (e) => { this.state.ExportData (this.state.Get().characterName) }
 		})
 
 		this.importFileButton = new Button ({
@@ -209,9 +212,37 @@ export default class CharacterCreator {
 				this.state.Assign ('frames', { [keyName]: [] });
 			});
 		});
+		
+		this.Update();
+	}
+	
+	Update () {
+		if (this.hasError) { return; }
+		
+		requestAnimationFrame (() => {this.Update ()});
+		
+		try {
+			var deltaTime = this.clock.getDelta ();
+			
+			if (this.playing) {
+				this.frameTimer += deltaTime * 1000; //convert to ms
+				var frame = this.GetCurrentFrame ();
+			
+				if (frame && frame.duration <= this.frameTimer) {
+					var s = this.state.Get();
+					var nextFrame = s.currentFrame + 1 > this.GetFrameCountOfCurrentAnimation () ? 1 : s.currentFrame + 1;
+					this.ChangeFrame ({value: nextFrame}); 
+					this.frameTimer = 0;
+				}
+			}
+		}
+		catch (err) {
+			this.hasError = err;	
+		}	
 	}
 	
 	RedrawScene() {
+		var s = this.state.Get();
 		this.ctx.clearRect(0, 0, 512, 512);
 		
 		var image = this.GetImageInCurrentFrame ();
@@ -223,6 +254,8 @@ export default class CharacterCreator {
 				512, 512
 			);	
 		}
+		
+		this.frameDurationInput.label.setContent ('Frame ' + s.currentFrame + ' Duration(ms)');
 	}
 	
 	GetCurrentAnimationName () {
@@ -230,8 +263,26 @@ export default class CharacterCreator {
 		return s.currentAnimation + '-' + s.currentFacing
 	}
 	
+	GetFrameCountOfCurrentAnimation () {
+		var s = this.state.Get();
+		var animName = this.GetCurrentAnimationName ();
+		return s.frames [animName].length
+	}
+	
+	GetCurrentFrame () {
+		var s = this.state.Get();
+		var currentAnimation = this.GetCurrentAnimationName ();
+		var frameIndex = s.currentFrame - 1;
+		
+		if (s.frames [currentAnimation] && s.frames [currentAnimation] [frameIndex]) {
+			return s.frames [currentAnimation] [frameIndex]
+		}
+	}
+	
 	GetImageInCurrentFrame () {
-		return this.state.Get ().frames [this.GetCurrentAnimationName ()] [this.state.Get().currentFrame - 1].image
+		var frame = this.GetCurrentFrame ();
+		
+		if (frame.image) { return frame.image }
 	}
 	
 	ChangeAnimation ({event, node, target}) {
@@ -246,7 +297,24 @@ export default class CharacterCreator {
 	
 	ChangeFrame ({event, node, target, value}) {
 		this.state.Set ({currentFrame: value});
+		
+		var frame = this.GetCurrentFrame ();
+		
+		if (frame.duration != undefined) {
+			this.frameDurationInput.setValue (frame.duration);
+			this.frameSelector.setValue (value);
+		}
+		
 		this.RedrawScene();
+	}
+	
+	ChangeCurrentFrameDuration ({event, node, target, value}) {
+		var currentFrame = this.GetCurrentFrame ();
+		
+		// due to how javascript objects work, this should update the object in the original state
+		if (currentFrame) {
+			currentFrame.duration = value;
+		}
 	}
 	
 	HandleMultipleImages ({event, node, target, value}) {
@@ -254,7 +322,11 @@ export default class CharacterCreator {
 		var newFrames = [];
 		
 		value.forEach ((img) => {
-			newFrames.push ( new Frame ({image: img, duration: state.currentDuration}) )
+			newFrames.push ( new Frame ({
+				image: img, 
+				duration: state.currentDuration,
+				src: img.src
+			}) )
 		});
 		
 		state.frames [this.GetCurrentAnimationName ()] = newFrames
@@ -264,6 +336,13 @@ export default class CharacterCreator {
 		this.frameSelector.setValue (1);
 		this.state.Set ({currentFrame: 1});
 		this.RedrawScene();
+	}
+	
+	HandlePlayPause () {
+		this.playing = !this.playing;
+		
+		var labelContent = this.playing ? 'Pause' : 'Play'
+		this.playPauseButton.node.html (labelContent);
 	}
 	
 }

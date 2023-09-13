@@ -87,6 +87,18 @@ p {
 	margin-right: 1em;
 }
 
+.ui.frame-duration {
+	display: flex;
+}
+
+.ui.frame-duration > div:nth-child(1) {
+	flex: 1
+}
+
+.ui.frame-duration > .ui.label-input {
+	margin-right: 0;
+}
+
 .frame-form.container .ui.input-slider {
 	display: flex;
 }

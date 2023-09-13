@@ -7,6 +7,7 @@ import Label from '/incarnation/component/Label.js';
 import LabeledInput from '/incarnation/component/LabeledInput.js';
 import Canvas from '/incarnation/component/Canvas.js';
 import TextFileInput from '/incarnation/component/TextFileInput.js';
+import Dropdown from '/incarnation/component/Dropdown.js';
 
 class Frame {
 	constructor ({image, duration, src}) {
@@ -151,6 +152,18 @@ export default class CharacterCreator {
 			label: { content: 'Character Name' }
 		})
 		
+		this.characterSizeLabel = new Label ({
+			parent: this.crudFormNode,
+			content: 'Character Size'
+		})
+		
+		this.characterSizeDropdown = new Dropdown ({
+			parent: this.crudFormNode,
+			onChange: (e) => { console.log ('don\'t forget to collect character info into exported state') },
+			class: 'ui character-size',
+			options: ['Medium - sprite will be same size in game', 'Large - sprite will be 1/3rd bigger game', 'small - sprite will be 1/3rd smaller in game']
+		});
+		
 		this.characterNameInput.setValue ('Vagrant');
 		this.state.Set ({characterName: 'Vagrant'});
 
@@ -174,6 +187,12 @@ export default class CharacterCreator {
 		this.saveToProfileButton = new Button ({
 			parent: this.crudButtonsNode,
 			label: 'Save to Profile',
+			onClick: (e) => {  }
+		})
+		
+		this.loadFromProfileButton = new Button ({
+			parent: this.crudButtonsNode,
+			label: 'Load from Profile',
 			onClick: (e) => {  }
 		})
 		// END OF CRUD OPERATION UI 

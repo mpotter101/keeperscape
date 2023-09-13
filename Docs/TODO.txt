@@ -5,7 +5,7 @@ Backlog:
 2023 Sep 13
 	Ended up refactoring the character creator entirely due to performance issues.
 	
-	[ ] Style refactored character creator
+	[v] Style refactored character creator
 	[ ] Add Profile page
 	[ ] Setup way to save characters to database
 	[ ] View character roster on profile

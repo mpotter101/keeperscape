@@ -1,11 +1,26 @@
 canvas {
 	background: black;
-	height: 50vh;
-	width: 50vh;
+	height: 100%;
+	width: 100%;
+}
+
+p {
+	margin-bottom: 0.2em;
 }
 
 .container {
 	padding: 1em;
+}
+
+.buttons{
+	display: flex;
+	justify-content: space-between;
+}
+
+.buttons > .button {
+	flex: 1;
+	margin-left: 1em;
+	text-align: center;
 }
 
 .animation-form.container {
@@ -55,4 +70,35 @@ canvas {
 
 .tips {
 	font-size: 0.8em;
+}
+
+.frame-form.container .ui.input {
+	width: 3em;
+	display: inline-block;
+}
+
+.frame-form.container .ui.button {
+	font-size: 0.8em;
+}
+
+.frame-form.container .ui.label-input,
+.frame-form.container .ui.header{
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.frame-form.container .ui.input-slider {
+	display: flex;
+}
+
+.frame-form.container .ui.input-slider input {
+	flex: 0.25;
+}
+
+.frame-form.container .ui.input-slider input[type=range] {
+	flex: 1;
+}
+
+.frame-data-form .ui {
+	margin-top: 0.6em;
 }

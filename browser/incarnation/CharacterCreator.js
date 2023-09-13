@@ -68,7 +68,8 @@ export default class CharacterCreator {
 		// setup constant ui
 		this.formNode = $('#form');
 		this.canvasNode = $('#canvas');
-		this.crudNode = $('#crud-operations');
+		this.crudButtonsNode = $('#crud-buttons');
+		this.crudFormNode = $('#crud-form');
 		this.animationsNode = $('#animation-buttons');
 		this.facingsNode = $('#facings-buttons');
 		this.canvasContainerNode = $('#canvas-container');
@@ -132,9 +133,7 @@ export default class CharacterCreator {
 		this.setAllFrameDurationsButton = new Button ({
 			parent: this.formNode,
 			label: 'Set All Frame Durations To Match This Frame',
-			onClick: (e) => { 
-				this.HandleMatchFrameDurations();
-			}
+			onClick: (e) => { this.HandleMatchFrameDurations(); }
 		});
 
 		this.playPauseButton = new Button ({
@@ -146,7 +145,7 @@ export default class CharacterCreator {
 
 		// CRUD OPERATION UI
 		this.characterNameInput = new LabeledInput ({
-			parent: this.crudNode,
+			parent: this.crudFormNode,
 			class: 'ui character-name',
 			onInput: (e) => {  },
 			label: { content: 'Character Name' }
@@ -156,7 +155,7 @@ export default class CharacterCreator {
 		this.state.Set ({characterName: 'Vagrant'});
 
 		this.exportFileButton = new Button ({
-			parent: this.crudNode,
+			parent: this.crudButtonsNode,
 			label: 'Export JSON File',
 			onClick: (e) => { this.state.ExportData (this.state.Get().characterName) }
 		})
@@ -167,13 +166,13 @@ export default class CharacterCreator {
         })
 		
 		this.importFileButton = new Button ({
-			parent: this.crudNode,
+			parent: this.crudButtonsNode,
 			label: 'Import JSON File',
 			onClick: (e) => { this.dataImporter.node.click (); }
 		})
 
 		this.saveToProfileButton = new Button ({
-			parent: this.crudNode,
+			parent: this.crudButtonsNode,
 			label: 'Save to Profile',
 			onClick: (e) => {  }
 		})
@@ -229,6 +228,7 @@ export default class CharacterCreator {
 		});
 		
 		this.UpdateTitleAndNotes();
+		this.OnStateChange();
 		this.Update();
 	}
 	
@@ -302,6 +302,7 @@ export default class CharacterCreator {
 		
 		this.frameSelector.slider.setMaxValue (s.frames [animName].length);
 		this.frameSelector.setValue (1);
+		this.frameSelector.label.setContent ('Frame Selection : Frame Count (' + s.frames [animName].length + ')');
 	}
 	
 	RedrawScene() {
@@ -418,6 +419,21 @@ export default class CharacterCreator {
 		
 		var labelContent = this.playing ? 'Pause' : 'Play'
 		this.playPauseButton.node.html (labelContent);
+	}
+	
+	HandleMatchFrameDurations() {
+		var s = this.state.Get();
+		var animName = this.GetCurrentAnimationName();
+		var currentFrames = s.frames [animName];
+		var frameToMatch = this.GetCurrentFrame ();
+		
+		if (frameToMatch) {
+			currentFrames.forEach (frame => {
+				frame.duration = frameToMatch.duration;
+			});
+		}
+		
+		this.OnStateChange();
 	}
 	
 }

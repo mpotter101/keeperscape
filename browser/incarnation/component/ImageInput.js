@@ -83,7 +83,7 @@ export default class ImageInput extends Html {
             if (img) { loadedCount++; }
         })
 
-        console.log ('Images loaded: ' + loadedCount + ' Images to load: ' + this.fileOrder.length);
+        //console.log ('Images loaded: ' + loadedCount + ' Images to load: ' + this.fileOrder.length);
 
         if (loadedCount == this.fileOrder.length) {
             this.onMultiImageUpload({

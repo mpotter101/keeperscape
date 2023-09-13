@@ -157,16 +157,6 @@ export default class AnimationForm extends Html {
         this.groups.form.addContent (this.playPauseButton.node);
     }
 
-    HandleImage (data) {
-        var frameIndex = this.GetCurrentFrame ();
-        this.SetImageInFramesGroup ({index: frameIndex,  src: data.value.src});
-        this.canvasManager.SetImage ({
-            index: frameIndex,
-            img: data.value,
-            duration: this.frameDurationInput.getValue ()
-        });
-    }
-
     HandleMaxFrameCountChange (data) {
         var val = data.value;
         var oldVal = this.frameSelector.slider.getMaxValue ();
@@ -236,6 +226,16 @@ export default class AnimationForm extends Html {
         else {
             this.playPauseButton.node.html ('Play');
         }
+    }
+	
+	HandleImage (data) {
+        var frameIndex = this.GetCurrentFrame ();
+        this.SetImageInFramesGroup ({index: frameIndex,  src: data.value.src});
+        this.canvasManager.SetImage ({
+            index: frameIndex,
+            img: data.value,
+            duration: this.frameDurationInput.getValue ()
+        });
     }
 
     HandleMultipleImages ({target, event, node, value}) {

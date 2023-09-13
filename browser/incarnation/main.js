@@ -44,7 +44,7 @@ const config = {
 			notes: 'Plays when you receive damage. This is prioritized over idle and movement animations.'
 		},
         'KO': {
-			notes: 'In-game, this animation will not loop. When you are revived, this animation will play backwards.'
+			notes: 'In-game this animation will not loop. When you are revived, this animation will play backwards.'
         },
         'Emote1': {
 			notes: 'Optional, plays when you select this character in a pre-game character selection lobby. Can also be performed in-game.'

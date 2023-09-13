@@ -15,10 +15,14 @@ canvas {
 	flex-direction: row;
 	align-items: stretch;
 	background: #555;
-	max-height:  70vh;
+}
+
+.animation-form.container > *.container {
+	flex: 0.75;
 }
 
 .animation-form.container > .canvas.container {
+	text-align: center;
 	flex: 1;
 }
 
@@ -31,6 +35,15 @@ canvas {
 	 margin-top: 7px;
 }
 
+.ui.button:hover {
+	background-color: #2b2a30;
+	cursor: pointer;
+}
+
+.ui.button.active {
+	background-color: #5b5a90;
+}
+
 .animation-state.container {
 	font-size: 0.8em;
 }
@@ -38,4 +51,8 @@ canvas {
 .animation-state.container .button {
 	display: inline-block;
 	margin: 0 auto;
+}
+
+.tips {
+	font-size: 0.8em;
 }

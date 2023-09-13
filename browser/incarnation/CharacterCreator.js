@@ -6,6 +6,7 @@ import InputSlider from '/incarnation/component/InputSlider.js';
 import Label from '/incarnation/component/Label.js';
 import LabeledInput from '/incarnation/component/LabeledInput.js';
 import Canvas from '/incarnation/component/Canvas.js';
+import TextFileInput from '/incarnation/component/TextFileInput.js';
 
 class Frame {
 	constructor ({image, duration, src}) {
@@ -71,6 +72,8 @@ export default class CharacterCreator {
 		this.animationsNode = $('#animation-buttons');
 		this.facingsNode = $('#facings-buttons');
 		this.canvasContainerNode = $('#canvas-container');
+		this.animationTitleNode = $('#current-animation-label');
+		this.animationNotesNode = $('#current-animation-notes');
 		
 		this.canvas = new Canvas ({
             parent: this.canvasContainerNode,
@@ -158,10 +161,15 @@ export default class CharacterCreator {
 			onClick: (e) => { this.state.ExportData (this.state.Get().characterName) }
 		})
 
+		this.dataImporter = new TextFileInput ({
+            parent: $(document.body),
+            onFile: (data) => { this.ImportJson (data); }
+        })
+		
 		this.importFileButton = new Button ({
 			parent: this.crudNode,
 			label: 'Import JSON File',
-			onClick: (e) => {  }
+			onClick: (e) => { this.dataImporter.node.click (); }
 		})
 
 		this.saveToProfileButton = new Button ({
@@ -171,8 +179,9 @@ export default class CharacterCreator {
 		})
 		// END OF CRUD OPERATION UI 
 
-		// ANIMATION SELECTION UI 
 		// create ui based on config
+		// ANIMATION SELECTION UI 
+		this.animationNotes = {};
 		this.animationButtons = [];
 		var keys = Object.keys (config.animations);
 		for (var key in keys)
@@ -185,7 +194,11 @@ export default class CharacterCreator {
 				notes: item.notes,
 				name: keys [key]
 			}))
+			
+			this.animationNotes [keys [key]] = item.notes
 		}
+		
+		this.animationButtons [0].node.addClass ('active');
 
 		this.facingButtons = [];
 		for (var key in config.facings) {
@@ -196,6 +209,8 @@ export default class CharacterCreator {
 				name: config.facings [key]
 			}))
 		}
+		
+		this.facingButtons [0].node.addClass ('active');
 		// END OF ANIMATION SELECTION UI
 		
 		// Setting up Character Creator
@@ -213,7 +228,32 @@ export default class CharacterCreator {
 			});
 		});
 		
+		this.UpdateTitleAndNotes();
 		this.Update();
+	}
+	
+	ImportJson ({value}) {
+		var json = JSON.parse (value);
+		
+		this.state.Set (json);
+		
+		// setup frames
+		var s = this.state.Get();
+		var keys = Object.keys (s.frames);
+		keys.forEach (key => {
+			var frame = s.frames [key];
+			frame.forEach (cell => {
+				cell.image = $('<img />') [0]
+				cell.image.src = cell.src;
+			});
+		});
+		
+		var animBtn = this.animationButtons [0];
+		var faceBtn = this.facingButtons [0];
+		this.ChangeAnimation ({node: animBtn.node, target: animBtn, value: animBtn.name});
+		this.ChangeFacing ({node: faceBtn.node, target: faceBtn, value: faceBtn.name});
+		this.UpdateFrameSelector();
+		this.RedrawScene();
 	}
 	
 	Update () {
@@ -239,6 +279,29 @@ export default class CharacterCreator {
 		catch (err) {
 			this.hasError = err;	
 		}	
+	}
+	
+	OnStateChange () {
+		this.UpdateTitleAndNotes();
+		this.UpdateFrameSelector();
+		this.RedrawScene();
+	}
+	
+	UpdateTitleAndNotes () {
+		var s = this.state.Get ();
+		var animName = s.currentAnimation;
+		var facingName = s.currentFacing;
+		
+		this.animationTitleNode.html(animName + ' ' + facingName);
+		this.animationNotesNode.html(this.animationNotes [animName]);
+	}
+	
+	UpdateFrameSelector () {
+		var s = this.state.Get();
+		var animName = this.GetCurrentAnimationName ();
+		
+		this.frameSelector.slider.setMaxValue (s.frames [animName].length);
+		this.frameSelector.setValue (1);
 	}
 	
 	RedrawScene() {
@@ -282,17 +345,31 @@ export default class CharacterCreator {
 	GetImageInCurrentFrame () {
 		var frame = this.GetCurrentFrame ();
 		
-		if (frame.image) { return frame.image }
+		if (frame && frame.image) { return frame.image }
 	}
 	
 	ChangeAnimation ({event, node, target}) {
 		this.state.Set ({currentAnimation: target.name});
-		this.RedrawScene();
+		
+		this.animationButtons.forEach (button => {
+			button.node.removeClass ('active');
+		});
+		
+		node.addClass ('active');
+		this.state.Set ({currentFrame: 1});
+		this.OnStateChange();
 	}
 	
 	ChangeFacing ({event, node, target}) {
 		this.state.Set ({currentFacing: target.name});
-		this.RedrawScene();
+		
+		this.facingButtons.forEach (button => {
+			button.node.removeClass ('active');
+		});
+		
+		node.addClass ('active');
+		this.state.Set ({currentFrame: 1});
+		this.OnStateChange();
 	}
 	
 	ChangeFrame ({event, node, target, value}) {
@@ -331,11 +408,9 @@ export default class CharacterCreator {
 		
 		state.frames [this.GetCurrentAnimationName ()] = newFrames
 		this.state.Assign ('frames', state.frames);
-		
-		this.frameSelector.slider.setMaxValue (newFrames.length);
-		this.frameSelector.setValue (1);
 		this.state.Set ({currentFrame: 1});
-		this.RedrawScene();
+		
+		this.OnStateChange();
 	}
 	
 	HandlePlayPause () {

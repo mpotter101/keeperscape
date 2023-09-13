@@ -1,34 +1,32 @@
-<link rel="stylesheet" type="text/css" href="/library/semantic-ui/semantic.css">
-<link rel="stylesheet" type="text/css" href="/component-style.css" />
-<link rel="stylesheet" type="text/css" href="/character-creator-style.css" />
-
+<link rel="stylesheet" href="/character-creator-style.css">
 <!-- 3rd party dependencies -->
-<script src="/library/semantic-ui/semantic.min.js"></script>
-<script src="/library/semantic-ui/components/transition.js"></script>
 <script src="/library/jszip.js"></script>
 
 <div>
-    <div class="ui basic segment body" id="body-bar">
-        <div id="app">
-            <div id="stage"></div>
-        </div>
-    </div>
-    <div class="ui basic segment" id="footer-bar">
-        <div class="ui segment group tips">
-            <div>
-                Tips:
-            </div>
-            <div>
-                - All frames should have a 1:1 aspect ration. 256x256 recommended
-            </div>
-            <div>
-                - Animations with faded names are optional.
-            </div>
-            <div>
-                - When uploading multiple frames, if you set the frame duration first then all new frames will have that duration.
-            </div>
-        </div>
-    </div>
+	<div class="animation-state container">
+		<div id="animation-buttons">
+		
+		</div>
+		<div id="facings-buttons">
+
+		</div>
+	</div>
+	
+	<div class="animation-form container">
+		<div class="form container">
+			<div id="form">
+				
+			</div>
+		</div>
+		<div class="canvas container">
+			<canvas id="canvas"></canvas>
+		</div>
+	</div>
+	
+	<div>
+		<div id="crud-operations">
+		</div>
+	</div>
 </div>
 
-<script type="module" src="/incarnation/Boot.js"></script>
+<script type="module" src="/incarnation/main.js"></script>

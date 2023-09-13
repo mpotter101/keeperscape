@@ -2,12 +2,20 @@ Backlog:
 	[ ] Figure out how to reach arango front-end via 0.0.0.0 instead of only localhost
 	[ ] Add ability to logout
 		
+2023 Sep 13
+	Ended up refactoring the character creator entirely due to performance issues.
+	
+	[ ] Style refactored character creator
+	[ ] Add Profile page
+	[ ] Setup way to save characters to database
+	[ ] View character roster on profile
+		
 2023 Sep 11
 	[v] Get Vile Spawn character creator working with new setup
 	[v] Rename Vile Spawn to Incarnation
 	[v] Get tool tab button to point to incarnation
 	[ ] Re-style incarnation to look better on lower-res screens
-	[ ] Fix styling issues from less to css conversion
+	[v] Fix styling issues from less to css conversion
 	[ ] Add way to save uploaded sprite to account
 	[ ] Add way to view uploaded characters on account/profile page
 	[ ] Add way to edit an uploaded character

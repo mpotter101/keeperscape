@@ -96,6 +96,19 @@ export default class KeeperscapeDatabase {
 		})
 	}
 	
+	async GetUserByUsername (username) {
+		var query = [
+			'FOR u IN users',
+				'FILTER u.username == "' + username + '"',
+				'LIMIT 1',
+				'return u'
+		].join ('\n');
+		var cursor = await this.database.query(query);
+		var results = await cursor.all();
+		
+		return results [0];
+	}
+	
 	async EnsureArchitecture () {
 		try {
 			this.database = await new Database({databaseName: DB_NAME});

@@ -37,55 +37,55 @@ class ExportableState {
 		
 		return this.state
 	}
-	
-	ExportData (filename) {
-        var jsonFileContent = JSON.stringify (this.state, null, 4);
-        this.Download (jsonFileContent, filename + '.json', "text/plain");
-    }
-
-    // Borrowd from here: http://www.4codev.com/javascript/download-save-json-content-to-local-file-in-javascript-idpx473668115863369846.html
-    Download(content, fileName, contentType) {
-        const a = document.createElement("a");
-        const file = new Blob([content], { type: contentType });
-        a.href = URL.createObjectURL(file);
-        a.download = fileName;
-        a.click();
-    }
 }
 
 export default class CharacterCreator {
-	constructor (config) {
+	constructor ({
+		name,
+		canvasHeight,
+		canvasWidth,
+		defaultFrameDuration,
+		formNode,
+		canvasNode,
+		animationsNode,
+		facingsNode,
+		canvasContainerNode,
+		animationTitleNode,
+		animationNotesNode,
+		facings,
+		animations,
+	}) {
 		this.state = new ExportableState ({ 
+				name,
 				currentAnimation: '', 
 				currentFacing: '',
 				currentFrame: 1,
-				currentDuration: 200,
+				currentDuration: defaultFrameDuration,
 				frames: {},
 				characterName: '',
-			},
-		  	() => { this.Update(); }
+			}
 		);
 		
 		// setup constant ui
-		this.formNode = $('#form');
-		this.canvasNode = $('#canvas');
-		this.crudButtonsNode = $('#crud-buttons');
-		this.crudFormNode = $('#crud-form');
-		this.animationsNode = $('#animation-buttons');
-		this.facingsNode = $('#facings-buttons');
-		this.canvasContainerNode = $('#canvas-container');
-		this.animationTitleNode = $('#current-animation-label');
-		this.animationNotesNode = $('#current-animation-notes');
+		this.formNode = formNode;
+		this.canvasNode = canvasNode;
+		this.animationsNode = animationsNode;
+		this.facingsNode = facingsNode;
+		this.canvasContainerNode = canvasContainerNode;
+		this.animationTitleNode = animationTitleNode;
+		this.animationNotesNode = animationNotesNode;
 		
 		this.canvas = new Canvas ({
             parent: this.canvasContainerNode,
-            prop: { width: 512, height: 512 }
+            prop: { width: canvasWidth, height: canvasHeight }
         });
 		this.ctx = this.canvas.node [0].getContext ('2d');
 		this.clock = new THREE.Clock ();
 		this.clock.start ();
 		this.playing = false;
 		this.frameTimer = 0;
+		this.width = canvasWidth;
+		this.height = canvasHeight;
 
 		// FORM UI
 		this.imageLoader = new ImageInput ({
@@ -144,67 +144,14 @@ export default class CharacterCreator {
 		})
 		// END OF FORM UI
 
-		// CRUD OPERATION UI
-		this.characterNameInput = new LabeledInput ({
-			parent: this.crudFormNode,
-			class: 'ui character-name',
-			onInput: (e) => {  },
-			label: { content: 'Character Name' }
-		})
-		
-		this.characterSizeLabel = new Label ({
-			parent: this.crudFormNode,
-			content: 'Character Size'
-		})
-		
-		this.characterSizeDropdown = new Dropdown ({
-			parent: this.crudFormNode,
-			onChange: (e) => { console.log ('don\'t forget to collect character info into exported state') },
-			class: 'ui character-size',
-			options: ['Medium - sprite will be same size in game', 'Large - sprite will be 1/3rd bigger game', 'small - sprite will be 1/3rd smaller in game']
-		});
-		
-		this.characterNameInput.setValue ('Vagrant');
-		this.state.Set ({characterName: 'Vagrant'});
-
-		this.exportFileButton = new Button ({
-			parent: this.crudButtonsNode,
-			label: 'Export JSON File',
-			onClick: (e) => { this.state.ExportData (this.state.Get().characterName) }
-		})
-
-		this.dataImporter = new TextFileInput ({
-            parent: $(document.body),
-            onFile: (data) => { this.ImportJson (data); }
-        })
-		
-		this.importFileButton = new Button ({
-			parent: this.crudButtonsNode,
-			label: 'Import JSON File',
-			onClick: (e) => { this.dataImporter.node.click (); }
-		})
-
-		this.saveToProfileButton = new Button ({
-			parent: this.crudButtonsNode,
-			label: 'Save to Profile',
-			onClick: (e) => {  }
-		})
-		
-		this.loadFromProfileButton = new Button ({
-			parent: this.crudButtonsNode,
-			label: 'Load from Profile',
-			onClick: (e) => {  }
-		})
-		// END OF CRUD OPERATION UI 
-
 		// create ui based on config
 		// ANIMATION SELECTION UI 
 		this.animationNotes = {};
 		this.animationButtons = [];
-		var keys = Object.keys (config.animations);
+		var keys = Object.keys (animations);
 		for (var key in keys)
 		{
-			var item = config.animations [keys [key]];
+			var item = animations [keys [key]];
 			this.animationButtons.push (new Button ({
 				parent: this.animationsNode,
 				label: keys [key],
@@ -219,12 +166,12 @@ export default class CharacterCreator {
 		this.animationButtons [0].node.addClass ('active');
 
 		this.facingButtons = [];
-		for (var key in config.facings) {
+		for (var key in facings) {
 			this.facingButtons.push (new Button ({
 				parent: this.facingsNode,
-				label: config.facings [key],
+				label: facings [key],
 				onClick: (e) => { this.ChangeFacing (e); },
-				name: config.facings [key]
+				name: facings [key]
 			}))
 		}
 		
@@ -251,13 +198,12 @@ export default class CharacterCreator {
 		this.Update();
 	}
 	
-	ImportJson ({value}) {
-		var json = JSON.parse (value);
-		
+	ImportJson ({json}) {
 		this.state.Set (json);
 		
 		// setup frames
 		var s = this.state.Get();
+		
 		var keys = Object.keys (s.frames);
 		keys.forEach (key => {
 			var frame = s.frames [key];
@@ -326,7 +272,7 @@ export default class CharacterCreator {
 	
 	RedrawScene() {
 		var s = this.state.Get();
-		this.ctx.clearRect(0, 0, 512, 512);
+		this.ctx.clearRect(0, 0, this.width, this.height);
 		
 		var image = this.GetImageInCurrentFrame ();
 		
@@ -334,7 +280,7 @@ export default class CharacterCreator {
 			this.ctx.drawImage (
 				image,
 				0,0,
-				512, 512
+				this.width, this.height
 			);	
 		}
 		

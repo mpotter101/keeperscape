@@ -11,10 +11,22 @@ export default class KeeperscapeTemplater {
 					resolve (data);
 				})
 		});
-		
 	}
 	
-	static async GetCompiledPage ({htmlPageFilePath, templateFilePath, navbarFilePath, footerFilePath, tabTitle}) {
+	static async GetPage (filePath) {
+		return await KeeperscapeTemplater.GetFileTextAsync ({filePath});
+	}
+	
+	static GetFilledOutPage ({data, page}) {
+		var p = page;
+		Object.keys (data).forEach (key => {
+			var value = data [key];
+			p = p.replace (key, value);
+		})
+		return p;
+	}
+	
+	static async GetCompiledPage ({userSession, htmlPageFilePath, templateFilePath, navbarFilePath, footerFilePath, tabTitle}) {
 		// Get the template
 		var template = await KeeperscapeTemplater.GetFileTextAsync ({filePath: templateFilePath});
 		// Get either the logged in or logged out navbar based on session
@@ -24,10 +36,18 @@ export default class KeeperscapeTemplater {
 		// Get the page indicated by the parameter
 		var pageContent = await KeeperscapeTemplater.GetFileTextAsync ({filePath: htmlPageFilePath});
 		
+		var data = {
+			"{{TITLE}}": tabTitle,
+			"{{NAVBAR}}": navbar,
+			"{{BODY}}": pageContent,
+			"{{FOOTER}}": footer
+		}
+		
+		if (userSession) { data ["{{USERNAME}}"] = userSession.username; }
+		
 		// Combine and return them
-		return template.replace ("{{TITLE}}", tabTitle)
-			.replace ("{{NAVBAR}}", navbar)
-			.replace ("{{BODY}}", pageContent)
-			.replace ("{{FOOTER}}", footer);
+		var page = KeeperscapeTemplater.GetFilledOutPage ({data, page: template });
+		
+		return page;
 	}
 }

@@ -35,12 +35,12 @@ var ip = '0.0.0.0';
 var port = 3000;
 var databasePort = 3100; 
 
-import KeeperscapeRouter from './KeeperscapeRouter.js';
-var keeperscapeRouter = new KeeperscapeRouter ({app, directory: __dirname});
-
 import KeeperscapeDatabase from './KeeperscapeDatabase.js';
 var keeperscapeDatabase = new KeeperscapeDatabase({ip, port: databasePort, app});
 await keeperscapeDatabase.Boot();
+
+import KeeperscapeRouter from './KeeperscapeRouter.js';
+var keeperscapeRouter = new KeeperscapeRouter ({app, directory: __dirname, kDatabase: keeperscapeDatabase});
 
 let requestHandler = app.listen (
 	port,

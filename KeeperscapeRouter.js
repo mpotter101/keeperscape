@@ -24,7 +24,7 @@ export default class KeeperscapeRouter {
 	
 	AddRoutesToApp (app) {
 		app.route ('/')
-			.get ( (req, res) => { this.SendPage ({req, res, localHtmlPageFilePath: '/html/index.html', tabTitle: 'Beholder Online'}); });
+			.get ( (req, res) => { this.SendPage ({req, res, localHtmlPageFilePath: '/html/index.html', tabTitle: 'Keeperscape'}); });
 		
 		app.route ('/logout')
 			.get ( (req, res) => { req.session.user = null; res.redirect ('/'); } );

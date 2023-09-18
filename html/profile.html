@@ -1,3 +1,5 @@
+<link rel="stylesheet" href="/profile-style.css">
+
 <script>
 	window.charactersJson = {{PROFILE_CHARACTERS}}
 </script>
@@ -7,44 +9,26 @@
 		<div> <img src="{{PROFILE_PROFILE_PICTURE}}" /> </div>
 		<div> {{PROFILE_DISPLAY_NAME}} </div>
 	</div>
-	<div class="profile character-library">
-		
-		<div class="profile character-card" style="border: solid 1px white">
-			<div>
-				<img />
-			</div>
-			<div>
-				<p>Character Name</p>
-			</div>
-			<div>
-				<div>view</div>
-				<div>Download</div>
-				<div>add to library</div>
-			</div>
-		</div>
-		
-		<div class="profile character-card owner" style="border: solid 1px white">
-			<div>
-				<img />
-			</div>
-			<div>
-				<p>Character Name</p>
-			</div>
-			<div>
-				<div>view</div>
-				<div>Download</div>
-				<div>Settings</div>
-			</div>
-		</div>
-		
-		<div class="profile character-settings" style="border: solid 1px white">
-			<div> <img /> </div>
-			<div>
-				<div>Change visibility</div>
-				<div>Load in Editor</div>
-				<div> Delete with "enter character name" field</div>
-			</div>
-		</div>
+	<div id="character-card-library" class="profile character-library">
 		
 	</div>
 </div>
+
+<div id="character-card-template" class="character container" style="display: none;">
+	<div class="character card">
+		<div class="character sprite"><img class="character image" src="" /></div>
+		<div class="character info">
+			<div class="character name"></div>
+			<div class="character buttons">
+				<div class="character button view-details">
+					<label>View Details</label>
+				</div>
+				<div class="character button add-to-library">
+					<label>Add to Library</label>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="module" src="/profile/ProfileLibrary.js"></script>

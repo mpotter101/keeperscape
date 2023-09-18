@@ -63,7 +63,6 @@ export default class KeeperscapeRouter {
 	AddRoutesToApp (app) {
 		app.route ('/').get ( 
 			(req, res) => { 
-				console.log ('hit homepage');
 				this.LoadAndSendPage ({req, res, localHtmlPageFilePath: '/html/index.html', tabTitle: 'Keeperscape'}); 
 			});
 		

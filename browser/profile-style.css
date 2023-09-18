@@ -1,0 +1,41 @@
+.character.container {
+	margin: 1em;
+	display: inline-block;
+	max-width: 22%;
+}
+
+.character.card {
+	border: 1px solid white;
+	width: auto;
+}
+
+.character.image {
+	height: 100%;
+	width: 100%;
+}
+
+.character.info {
+	padding: 0.5em;
+}
+
+.character.name {
+	border-top: 1px solid white;
+	padding: 0.5em;
+	text-align: center;
+}
+
+.character.button {
+	background: #134;
+	cursor: pointer;
+	text-align: center;
+	padding: 0.25em;
+	margin: 1px;
+}
+
+.character.button:hover {
+	background: #245;
+}
+
+.character.button:active {
+	background: #256;
+}

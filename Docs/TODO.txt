@@ -1,7 +1,18 @@
 Backlog:
 	[ ] Figure out how to reach arango front-end via 0.0.0.0 instead of only localhost
+	[ ] Edit characters you own
+	[ ] Add characters you don't own to a playable library
+	[ ] Settings for characters
+		( ) Edit - takes you to a version of incarnation for modifying an existing character
+		( ) Privacy - ability to be seen by others or not
+		( ) Shareable - whether or not others can add this to their library
+		( ) Delete - remove character from your profile and other's libraries
+		
+2023 sep 18
 	[ ] View character roster on profile
-	[ ] Setup way to save characters to database
+		
+2023 sep 17
+	[v] Setup way to save characters to database
 		
 2023 sep 14
 	Many updates to character creator form in regards to breaking out responsiblities as well as catching some missing functionality

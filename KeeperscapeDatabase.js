@@ -29,17 +29,32 @@ export default class KeeperscapeDatabase {
 		})
 	}
 	
+	async ExecuteQuery (query) {
+		var cursor = await this.database.query(query);
+		var results = await cursor.all();
+		return results;
+	}
+	
 	async GetUserByUsername (username) {
 		var query = [
-			'FOR u IN users',
+			'FOR u IN ' + DB_COLLECTIONS_USERS,
 				'FILTER u.username == "' + username + '"',
 				'LIMIT 1',
 				'return u'
 		].join ('\n');
-		var cursor = await this.database.query(query);
-		var results = await cursor.all();
+		var users = await this.ExecuteQuery (query); // cannot return awaited functions. Causes issues
+		return users [0];
+	}
+	
+	async GetCharactersByOwner (user) {
+		var query = [
+			'FOR c IN ' + DB_COLLECTIONS_CHARACTERS,
+				'FILTER c.meta.ownerId == "' + user._id + '"',
+				'return c'
+		].join ('\n');
 		
-		return results [0];
+		var characters = await this.ExecuteQuery (query);
+		return characters;
 	}
 	
 	async EnsureArchitecture () {
@@ -64,8 +79,6 @@ export default class KeeperscapeDatabase {
 		app.route ('/api/v1/profile/:username/character')
 			.post (async (req, res) => {
 				var characterToSave = req.body;
-			
-				console.log (characterToSave);
 				
 				characterToSave.meta = {
 					ownerId: req.session.user.id

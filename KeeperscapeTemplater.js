@@ -26,20 +26,18 @@ export default class KeeperscapeTemplater {
 		return p;
 	}
 	
-	static async GetCompiledPage ({userSession, htmlPageFilePath, templateFilePath, navbarFilePath, footerFilePath, tabTitle}) {
+	static async CompilePage ({userSession, page, templateFilePath, navbarFilePath, footerFilePath, tabTitle}) {
 		// Get the template
 		var template = await KeeperscapeTemplater.GetFileTextAsync ({filePath: templateFilePath});
 		// Get either the logged in or logged out navbar based on session
 		var navbar = await KeeperscapeTemplater.GetFileTextAsync ({filePath: navbarFilePath});
 		// Get the footer
 		var footer = await KeeperscapeTemplater.GetFileTextAsync ({filePath: footerFilePath});
-		// Get the page indicated by the parameter
-		var pageContent = await KeeperscapeTemplater.GetFileTextAsync ({filePath: htmlPageFilePath});
 		
 		var data = {
 			"{{TITLE}}": tabTitle,
 			"{{NAVBAR}}": navbar,
-			"{{BODY}}": pageContent,
+			"{{BODY}}": page,
 			"{{FOOTER}}": footer
 		}
 		

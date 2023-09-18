@@ -2,7 +2,7 @@ import Button from '/incarnation/component/Button.js';
 import TextFileInput from '/incarnation/component/TextFileInput.js';
 
 export default class DataCrudOperations {
-	constructor ({ onSaveToJson, onLoadFromJson, onSaveToProfile, onLoadFromProfile }) {
+	constructor ({ onSaveToJson, onLoadFromJson, onSaveToProfile }) {
 		this.crudButtonsNode = $('#crud-buttons');
 		this.exportFileButton = new Button ({
 			parent: this.crudButtonsNode,
@@ -26,11 +26,5 @@ export default class DataCrudOperations {
 			label: 'Save to Profile',
 			onClick: onSaveToProfile
 		})
-		
-		this.loadFromProfileButton = new Button ({
-			parent: this.crudButtonsNode,
-			label: 'Load from Profile',
-			onClick: onLoadFromProfile
-		})	
 	}
 }

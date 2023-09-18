@@ -48,7 +48,7 @@ export default class CharacterInfoForm {
 		this.attackStyleDropdown = new Dropdown ({
 			class: 'ui attack-dropdown',
 			parent: this.crudFormNode,
-			options: ['Unarmed', 'Melee', 'Ranged'],
+			options: ['Melee', 'Ranged'],
 		})
 		
 		this.attackDamageTypeDropdown = new Dropdown ({
@@ -67,7 +67,11 @@ export default class CharacterInfoForm {
 	GetJson() {
 		return {
 			name: this.name,
-			characterName: this.characterNameInput.getValue()
+			characterName: this.characterNameInput.getValue (),
+			description: this.characterDescriptionInput.getValue (),
+			size: this.characterSize.getValue (),
+			attackStyle: this.attackStyleDropdown.getValue (),
+			ability: this.abilityDropdown.getValue ()
 		}
 	}
 	

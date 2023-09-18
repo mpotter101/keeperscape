@@ -21,7 +21,7 @@ export default class KeeperscapeTemplater {
 		var p = page;
 		Object.keys (data).forEach (key => {
 			var value = data [key];
-			p = p.replace (key, value);
+			p = p.replaceAll (key, value);
 		})
 		return p;
 	}

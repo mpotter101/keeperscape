@@ -4,12 +4,11 @@ import CharacterInfoForm from '/incarnation/CharacterInfoForm.js';
 export default class CharacterDataManager {
 	constructor ({characterCreatorList}) {
 		this.characterCreatorList = characterCreatorList;
-		this.characterInfoForm = new CharacterInfoForm({name: 'character-info-form'});
+		this.characterInfoForm = new CharacterInfoForm({name: 'character-info'});
 		this.dataCrudOperations = new DataCrudOperations({
 			onSaveToJson: () => { this.SaveToJson (); },
 			onLoadFromJson: (e) => { this.LoadFromJson (e); },
-			onSaveToProfile: () => { },
-			onLoadFromProfile: () => { }
+			onSaveToProfile: () => { this.SaveToProfile (); }
 		});
 	}
 	
@@ -25,8 +24,6 @@ export default class CharacterDataManager {
 	SaveToJson () {
 		var filesToSave = [];
 		var characterInfo = this.characterInfoForm.GetJson ();
-		
-		console.log ("character info:", characterInfo);
 		
 		this.characterCreatorList.forEach (creator => {
 			var s = creator.state.Get();
@@ -58,5 +55,21 @@ export default class CharacterDataManager {
 		if (json.name == this.characterInfoForm.name) {
 			this.characterInfoForm.ImportJson ({json});
 		}
+	}
+	
+	SaveToProfile () {
+		var character = {}
+		character [this.characterInfoForm.name] = this.characterInfoForm.GetJson ();
+		
+		this.characterCreatorList.forEach (creator => {
+			var s = creator.state.Get();
+			character [s.name] = s;
+		});
+		
+		fetch('/api/v1/profile/' + window.username + '/character', {
+			method: 'POST',
+			body: JSON.stringify(character),
+			headers: {'Content-type': 'application/json; charset=UTF-8'}
+		})
 	}
 }

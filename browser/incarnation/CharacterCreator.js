@@ -62,7 +62,6 @@ export default class CharacterCreator {
 				currentFrame: 1,
 				currentDuration: defaultFrameDuration,
 				frames: {},
-				characterName: '',
 			}
 		);
 		

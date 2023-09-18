@@ -25,11 +25,14 @@ export default class CharacterDataManager {
 	SaveToJson () {
 		var filesToSave = [];
 		var characterInfo = this.characterInfoForm.GetJson ();
+		
+		console.log ("character info:", characterInfo);
+		
 		this.characterCreatorList.forEach (creator => {
 			var s = creator.state.Get();
 			this.Download (
 				JSON.stringify (s, null, 4),
-				characterInfo.name + '-' + s.name + '.json',
+				characterInfo.characterName + '-' + s.name + '.json',
 			)
 		});
 		

@@ -1,15 +1,22 @@
 Backlog:
 	[ ] Figure out how to reach arango front-end via 0.0.0.0 instead of only localhost
+	[ ] Figure out how to change which port the arango front-end runs on
 	[ ] Edit characters you own
 	[ ] Add characters you don't own to a playable library
-	[ ] Settings for characters
+	[ ] Remove characters from your library
+	[ ] Dashboard for characters
 		( ) Edit - takes you to a version of incarnation for modifying an existing character
 		( ) Privacy - ability to be seen by others or not
 		( ) Shareable - whether or not others can add this to their library
 		( ) Delete - remove character from your profile and other's libraries
+	[ ] Update profile character roster to show most recently updated character first
+	[ ] Finish styling incarnation
+	
+2023 sep 19
+	[v] Update Incarnation to redirect you to your profile after you save a character
 		
 2023 sep 18
-	[ ] View character roster on profile
+	[v] View character roster on profile
 		
 2023 sep 17
 	[v] Setup way to save characters to database

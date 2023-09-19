@@ -57,7 +57,7 @@ export default class CharacterDataManager {
 		}
 	}
 	
-	SaveToProfile () {
+	async SaveToProfile () {
 		var character = {}
 		character [this.characterInfoForm.name] = this.characterInfoForm.GetJson ();
 		
@@ -66,10 +66,16 @@ export default class CharacterDataManager {
 			character [s.name] = s;
 		});
 		
-		fetch('/api/v1/profile/' + window.username + '/character', {
+		var response = await fetch('/api/v1/profile/' + window.username + '/character', {
 			method: 'POST',
 			body: JSON.stringify(character),
 			headers: {'Content-type': 'application/json; charset=UTF-8'}
-		})
+		});
+		
+		var result = await response.json ();
+		console.log (result);
+		if (result.success) {
+			window.location.href = result.redirect;
+		}
 	}
 }

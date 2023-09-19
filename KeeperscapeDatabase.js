@@ -30,9 +30,16 @@ export default class KeeperscapeDatabase {
 	}
 	
 	async ExecuteQuery (query) {
-		var cursor = await this.database.query(query);
-		var results = await cursor.all();
-		return results;
+		try {
+			var cursor = await this.database.query(query);
+			var results = await cursor.all();	
+			return results;
+		}
+		catch (err) {
+			console.log (err);
+		}
+		
+		return [];
 	}
 	
 	async GetUserByUsername (username) {
@@ -42,7 +49,7 @@ export default class KeeperscapeDatabase {
 			'	LIMIT 1',
 			'	RETURN u'
 		].join ('\n');
-		var users = await this.ExecuteQuery (query); // cannot return awaited functions. Causes issues
+		var users = await this.ExecuteQuery (query);
 		return users [0];
 	}
 	
@@ -67,10 +74,14 @@ export default class KeeperscapeDatabase {
 			'		RETURN u',
 		].join ('\n');
 		
-		console.log (query);
+		var results = await this.ExecuteQuery (query);
 		
-		var result = await this.ExecuteQuery (query);
-		return result;
+		if (results.length && results [0].username) {
+			var updatedUser = await this.GetUserByUsername(user.username);
+			return updatedUser;
+		}
+		
+		return results [0];
 	}
 	
 	async EnsureArchitecture () {
@@ -109,9 +120,13 @@ export default class KeeperscapeDatabase {
 					var result = await this.collections.characters.save (characterToSave);
 					
 					if (result._id) {
-						// returns an outdated user, but the item does get added.
 						var updatedUser = await this.AddCharacterToLibrary(req.session.user, result);
-						res.send (JSON.stringify({success: {message: 'Character saved!'} }))
+						res.send (JSON.stringify(
+							{
+								success: {message: 'Character saved!'}, 
+								redirect: '/profile/' + req.session.user.username
+							}
+						));
 					}
 					
 				}
@@ -123,7 +138,26 @@ export default class KeeperscapeDatabase {
 		
 		app.route ('/api/v1/character/:character/addtolibrary')
 			.get (async (req, res) => {
+				if (!req.session || !req.session.user || !req.session.user._id) { 
+					res.send (JSON.stringify ({error: 'must be logged in to add a character to your library'}));
+					return;
+				}
+			
+				var user = req.sessions.user;
+				var character = { _id: req.params.character }
 				
+				try {
+					var updatedUser = await this.AddCharacterToLibrary(user, character);
+					if (updatedUser.library.includes (character._id)) {
+						res.send (JSON.stringify ({success: 'character added to library'}));
+					}
+					else {
+						res.send (JSON.stringify ({error: 'failed to add character to library'}));
+					}
+				}
+				catch (err) {
+					res.send (JSON.stringify ({error: err}))
+				}
 			});
 		
 		app.route ('/api/v1/register')

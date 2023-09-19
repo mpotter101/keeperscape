@@ -58,11 +58,21 @@ export default class KeeperscapeRouter {
 			localHtmlPageFilePath: '/html/profile-404.html', 
 			tabTitle: username + '\'s Profile'
 		});
-	}	
+	}
+	
+	async SendDashboard (req, res) {
+		var username = req.session.user.username;
+		var user = await this.kDatabase.GetUserByUsername (username);
+		
+		var characters = await this.kDatabase.GetCharactersByOwner (user);
+		var page = await KeeperscapeTemplater.GetPage (path.join (this.directory, '/html/dashboard.html'));
+		await this.SendPage ({req, res, page, tabTitle: 'Dashboard'});
+		return;
+	}
 	
 	AddRoutesToApp (app) {
 		app.route ('/').get ( 
-			(req, res) => { 
+			(req, res) => {
 				this.LoadAndSendPage ({req, res, localHtmlPageFilePath: '/html/index.html', tabTitle: 'Keeperscape'}); 
 			});
 		
@@ -93,6 +103,12 @@ export default class KeeperscapeRouter {
 			});
 		
 		app.route ('/profile/:username').get ( (req, res) => { this.SendProfile (req, res) } );
+		
+		app.route ('/dashboard').get ( (req, res) => {
+			if (!req.session.user) { res.redirect ('/'); return; }
+			
+			this.SendDashboard (req, res);
+		})
 		
 	}
 }

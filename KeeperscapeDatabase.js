@@ -38,9 +38,9 @@ export default class KeeperscapeDatabase {
 	async GetUserByUsername (username) {
 		var query = [
 			'FOR u IN ' + DB_COLLECTIONS_USERS,
-				'FILTER u.username == "' + username + '"',
-				'LIMIT 1',
-				'return u'
+			'	FILTER u.username == "' + username + '"',
+			'	LIMIT 1',
+			'	RETURN u'
 		].join ('\n');
 		var users = await this.ExecuteQuery (query); // cannot return awaited functions. Causes issues
 		return users [0];
@@ -49,12 +49,28 @@ export default class KeeperscapeDatabase {
 	async GetCharactersByOwner (user) {
 		var query = [
 			'FOR c IN ' + DB_COLLECTIONS_CHARACTERS,
-				'FILTER c.meta.ownerId == "' + user._id + '"',
-				'return c'
+			'	FILTER c.meta.ownerId == "' + user._id + '"',
+			'	RETURN c'
 		].join ('\n');
 		
 		var characters = await this.ExecuteQuery (query);
 		return characters;
+	}
+	
+	async AddCharacterToLibrary (user, character) {
+		var query = [
+			'FOR u IN ' + DB_COLLECTIONS_USERS,
+			'	FILTER u.username == "' + user.username + '"',
+			'	LIMIT 1',
+			'	LET newLibrary = PUSH(u.library, "' + character._id + '")',
+			'	UPDATE u WITH { library: newLibrary } IN ' + DB_COLLECTIONS_USERS,
+			'		RETURN u',
+		].join ('\n');
+		
+		console.log (query);
+		
+		var result = await this.ExecuteQuery (query);
+		return result;
 	}
 	
 	async EnsureArchitecture () {
@@ -78,16 +94,36 @@ export default class KeeperscapeDatabase {
 	AddRoutes (app) {
 		app.route ('/api/v1/profile/:username/character')
 			.post (async (req, res) => {
+				if (!req.session || !req.session.user || !req.session.user._id) { 
+					res.send (JSON.stringify ({error: 'must be logged in to create a character'}));
+					return;
+				}
+							  
 				var characterToSave = req.body;
 				
 				characterToSave.meta = {
-					ownerId: req.session.user.id
+					ownerId: req.session.user._id
 				}
 			
-				this.collections.characters.save (characterToSave).then (
-					meta => { res.send (JSON.stringify({success: {message: 'Character saved!'} })) },
-					err => { res.send (JSON.stringify( {error: err } ) ) }
-				)
+				try {
+					var result = await this.collections.characters.save (characterToSave);
+					
+					if (result._id) {
+						// returns an outdated user, but the item does get added.
+						var updatedUser = await this.AddCharacterToLibrary(req.session.user, result);
+						res.send (JSON.stringify({success: {message: 'Character saved!'} }))
+					}
+					
+				}
+				catch (err) {
+					console.log (err);
+					res.send (JSON.stringify({error: err }) );
+				}
+			});
+		
+		app.route ('/api/v1/character/:character/addtolibrary')
+			.get (async (req, res) => {
+				
 			});
 		
 		app.route ('/api/v1/register')
@@ -115,6 +151,7 @@ export default class KeeperscapeDatabase {
 					password: newUserData.password,
 					displayName: newUserData.username,
 					avatar: '',
+					library: [],
 				}).then (
 					meta => { res.send(JSON.stringify({success: {message: 'Account Created! Please try to login.'} })); },
 					err => { res.send(JSON.stringify({error: {message: 'Failed to create account', details: err} })); }
@@ -149,7 +186,7 @@ export default class KeeperscapeDatabase {
 							username: dbUser.username,
 							displayName: dbUser.displayName,
 							avatar: dbUser.avatar,
-							id: dbUser._id
+							_id: dbUser._id
 						}
 						res.redirect ('/');
 						return;

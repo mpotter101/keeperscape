@@ -31,4 +31,11 @@
 	</div>
 </div>
 
-<script type="module" src="/profile/ProfileLibrary.js"></script>
+<script type="module">
+	import { ProfileLibrary } from '/profile/ProfileLibrary.js'
+	$(window).on ('load', () => {
+		window.profileLibrary = new ProfileLibrary();
+		window.profileLibrary.CreateCards ();
+		window.profileLibrary.AnimateCards ();
+	});
+</script>

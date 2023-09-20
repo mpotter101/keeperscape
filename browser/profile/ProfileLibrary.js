@@ -1,10 +1,6 @@
 import * as THREE from 'three';
 
-$(window).on ('load', () => {
-	window.profileLibrary = new ProfileLibrary();
-});
-
-class CharacterCard {
+export class CharacterCard {
 	constructor ({character, node}) {
 		this.character = character;
 		this.node = node;
@@ -42,7 +38,7 @@ class CharacterCard {
 	}
 }
 
-class ProfileLibrary {
+export class ProfileLibrary {
 	constructor () {
 		var characters = window.charactersJson ? window.charactersJson : [];
 		this.containerNode = $('#character-card-library');
@@ -51,19 +47,21 @@ class ProfileLibrary {
 		
 		// iterate over character data, create cards
 		this.characterCards = [];
-		characters.forEach (character => {
+		this.characters = characters;
+		this.clock = new THREE.Clock ();
+		this.clock.start ();
+	}
+	
+	CreateCards () {
+		this.characters.forEach (character => {
 			var card = this.CreateCharacterCard (character);
 			this.containerNode.append (card.node);
 			this.characterCards.push (card);
 		});
-		
-		this.clock = new THREE.Clock ();
-		this.clock.start ();
-		
-		this.AnimateCards ();
 	}
 	
 	CreateCharacterCard (character) {
+		console.log ('creating character card');
 		var node = $('#character-card-template').clone();
 		node.css('display', '');
 		node.removeAttr('id');

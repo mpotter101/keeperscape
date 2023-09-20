@@ -1,7 +1,57 @@
+<link rel="stylesheet" href="/profile-style.css">
+
 <script>
-	window.charactersJson = {{PROFILE_CHARACTERS}}
+	window.charactersJson = {{DASHBOARD_CHARACTERS}}
 </script>
 
 <div>
-	Your dashboard
+	<a href="/profile/{{USERNAME}}">Your Profile</a>
 </div>
+<div>
+	<div>
+		Your dashboard
+	</div>
+	<div>
+		<div id="character-card-library" class="profile character-library">
+		
+		</div>
+	</div>
+</div>
+
+<div id="character-card-template" class="character container" style="display: none;">
+	<div class="character card">
+		<div class="character sprite"><img class="character image" src="" /></div>
+		<div class="character info">
+			<div class="character name"></div>
+			<div class="character buttons">
+				<div class="character button view-details">
+					<label>View Details</label>
+				</div>
+				<div class="character button add-to-library">
+					<label>Add to Library</label>
+				</div>
+				<div class="character button load-in-editor">
+					<label>Load In Character Creator</label>
+				</div>
+				<div class="character delete">
+					<div>
+						<label>Character Name</label>
+						<input name="character-name-for-delete" />
+					</div>
+					<div class="character button delete">
+					<label>Delete</label>
+				</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="module">
+import { DashboardManager } from '/dashboard/DashboardManager.js'
+$(window).on ('load', () => {
+	window.dashboardManager = new DashboardManager();
+	window.dashboardManager.CreateCards ();
+	window.dashboardManager.AnimateCards ();
+});
+</script>

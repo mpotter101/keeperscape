@@ -23,7 +23,7 @@ export default class KeeperscapeRouter {
 	
 	async SendPage({req, res, page, tabTitle}) {
 		var content = await KeeperscapeTemplater.CompilePage ({
-			userSession: req.session.user,
+			user: req.session.user,
 			page,
 			templateFilePath: path.join (this.directory, '/html/partial/template.html'),
 			navbarFilePath: path.join (this.directory, '/html/partial/' + this.GetNavbarFile (req)), 
@@ -66,6 +66,13 @@ export default class KeeperscapeRouter {
 		
 		var characters = await this.kDatabase.GetCharactersByOwner (user);
 		var page = await KeeperscapeTemplater.GetPage (path.join (this.directory, '/html/dashboard.html'));
+		page = KeeperscapeTemplater.GetFilledOutPage ({ 
+				data: {
+					'{{DASHBOARD_CHARACTERS}}': JSON.stringify (characters),
+					'{{USERNAME}}': user.username
+				}, 
+				page
+			});
 		await this.SendPage ({req, res, page, tabTitle: 'Dashboard'});
 		return;
 	}

@@ -220,6 +220,7 @@ export default class KeeperscapeDatabase {
 							username: dbUser.username,
 							displayName: dbUser.displayName,
 							avatar: dbUser.avatar,
+							library: dbUser.library,
 							_id: dbUser._id
 						}
 						res.redirect ('/');

@@ -84,6 +84,26 @@ export default class KeeperscapeDatabase {
 		return results [0];
 	}
 	
+	async RemoveCharacterFromLibrary (user, character) {
+		var query = [
+			'FOR u IN ' + DB_COLLECTIONS_USERS,
+			'	FILTER u.username == "' + user.username + '"',
+			'	LIMIT 1',
+			'	LET newLibrary = MINUS(u.library, ["' + character._id + '"])',
+			'	UPDATE u WITH { library: newLibrary } IN ' + DB_COLLECTIONS_USERS,
+			'		RETURN u',
+		].join ('\n');
+		
+		var results = await this.ExecuteQuery (query);
+		
+		if (results.length && results [0].username) {
+			var updatedUser = await this.GetUserByUsername(user.username);
+			return updatedUser;
+		}
+		
+		return results [0];
+	}
+	
 	async EnsureArchitecture () {
 		try {
 			this.database = await new Database({databaseName: DB_NAME});
@@ -100,6 +120,11 @@ export default class KeeperscapeDatabase {
 		try { await this.collections.characters.create(); } catch (err) {}
 		
 		return true;
+	}
+	
+	UpdateSession (req, updatedUser) {
+		req.session.user = Object.assign (req.session.user, updatedUser);
+		delete req.session.user.password;
 	}
 	
 	AddRoutes (app) {
@@ -121,6 +146,7 @@ export default class KeeperscapeDatabase {
 					
 					if (result._id) {
 						var updatedUser = await this.AddCharacterToLibrary(req.session.user, result);
+						this.UpdateSession (req, updatedUser);
 						res.send (JSON.stringify(
 							{
 								success: {message: 'Character saved!'}, 
@@ -136,20 +162,21 @@ export default class KeeperscapeDatabase {
 				}
 			});
 		
-		app.route ('/api/v1/character/:character/addtolibrary')
-			.get (async (req, res) => {
+		app.route ('/api/v1/character/:characterKey/library')
+			.put (async (req, res) => {
 				if (!req.session || !req.session.user || !req.session.user._id) { 
 					res.send (JSON.stringify ({error: 'must be logged in to add a character to your library'}));
 					return;
 				}
 			
-				var user = req.sessions.user;
-				var character = { _id: req.params.character }
+				var user = req.session.user;
+				var character = { _id: DB_COLLECTIONS_CHARACTERS + '/' + req.params.characterKey }
 				
 				try {
 					var updatedUser = await this.AddCharacterToLibrary(user, character);
+					this.UpdateSession (req, updatedUser);
 					if (updatedUser.library.includes (character._id)) {
-						res.send (JSON.stringify ({success: 'character added to library'}));
+						res.send (JSON.stringify ({success: 'character added to library', user: updatedUser}));
 					}
 					else {
 						res.send (JSON.stringify ({error: 'failed to add character to library'}));
@@ -158,7 +185,30 @@ export default class KeeperscapeDatabase {
 				catch (err) {
 					res.send (JSON.stringify ({error: err}))
 				}
-			});
+			})
+			.delete (async (req, res) => {
+				if (!req.session || !req.session.user || !req.session.user._id) { 
+					res.send (JSON.stringify ({error: 'must be logged in to remove a character to your library'}));
+					return;
+				}
+			
+				var user = req.session.user;
+				var character = { _id: DB_COLLECTIONS_CHARACTERS + '/' + req.params.characterKey }
+				
+				try {
+					var updatedUser = await this.RemoveCharacterFromLibrary(user, character);
+					this.UpdateSession (req, updatedUser);
+					if (!updatedUser.library.includes (character._id)) {
+						res.send (JSON.stringify ({success: 'character removed to library', user: updatedUser}));
+					}
+					else {
+						res.send (JSON.stringify ({error: 'failed to add character to library'}));
+					}
+				}
+				catch (err) {
+					res.send (JSON.stringify ({error: err}))
+				}
+			})
 		
 		app.route ('/api/v1/register')
 			.post (async (req, res) => {

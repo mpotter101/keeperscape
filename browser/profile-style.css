@@ -39,3 +39,15 @@
 .character.button:active {
 	background: #256;
 }
+
+.character.button.remove {
+	background: #931;
+}
+
+.character.button.remove:hover {
+	background: #A42;
+}
+
+.character.button.remove:active {
+	background: #B53;
+}

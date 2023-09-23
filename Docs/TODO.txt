@@ -11,6 +11,17 @@ Backlog:
 		( ) Delete - remove character from your profile and other's libraries
 	[ ] Update profile character roster to show most recently updated character first
 	[ ] Finish styling incarnation
+	[ ] "View Details" buttons on Character card brings up modal with:
+		- Name
+		- Description
+		- Sprite viewer (can preview all animations and facings)
+	
+2023 sep 20
+	< > Work on Dashboard
+	[ ] "Add To Library" button on character cards changes to "Remove From Library" if you already have that character in your library
+	[ ] Delete character button checks if field matches character name (Case Sensitive)
+	[ ] Delete character button deletes character off of database and removes it from everyone's libraries
+	
 	
 2023 sep 19
 	[v] Update Incarnation to redirect you to your profile after you save a character

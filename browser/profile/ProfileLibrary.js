@@ -11,11 +11,14 @@ export class CharacterCard {
 		this.facings = ['towards', 'towards-left', 'left', 'away-left', 'away', 'away-right', 'right', 'towards-right'];
 		this.animationName = 'Idle';
 		this.currentFacingIndex = -1;
+		this.inLibrary = false;
 		
 		this.nameNode.html (this.character ['character-info'].characterName);
 		
 		this.viewInfoButtonNode.on ('click', () => { this.ViewCharacterModal (); });
-		this.libraryButtonNode.on ('click', () => { this.AddToLibrary (); });
+		this.libraryButtonNode.on ('click', () => { this.HandleLibraryButton (); });
+		
+		this.UpdateLibraryButton();
 		
 		this.ProgressAnimation ();
 	}
@@ -24,8 +27,43 @@ export class CharacterCard {
 		console.log ('viewing character info')
 	}
 	
-	AddToLibrary () {
-		console.log ('adding character', this.character._id, 'to logged-in user')
+	async HandleLibraryButton () {
+		var response;
+		
+		if (this.inLibrary) {
+			response = await fetch('/api/v1/character/' + this.character._key + '/library', {
+				method: 'DELETE',
+				headers: {'Content-type': 'application/json; charset=UTF-8'}
+			});
+		}
+		else {
+			response = await fetch('/api/v1/character/' + this.character._key + '/library', {
+				method: 'PUT',
+				headers: {'Content-type': 'application/json; charset=UTF-8'}
+			});
+		}
+		
+		var result = await response.json ();
+		if (result.user) { window.user = result.user };
+		this.UpdateLibraryButton();
+	}
+	
+	UpdateLibraryButton () {
+		var u = window.user
+		this.inLibrary = false
+		
+		if (u && u.library.length) {
+			if (u.library.includes (this.character._id)) { this.inLibrary = true; }
+		}
+		
+		if (this.inLibrary) {
+			this.libraryButtonNode.html ('Remove from Library');
+			this.libraryButtonNode.addClass ('remove');
+		}
+		else {
+			this.libraryButtonNode.html ('Add to Library');
+			this.libraryButtonNode.removeClass ('remove');
+		}
 	}
 	
 	ProgressAnimation () {

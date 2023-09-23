@@ -4,6 +4,18 @@ class DashboardCard extends CharacterCard {
 	constructor ({character, node}) {
 		super({character, node});
 	}
+	
+	LoadCharacterInEditor () {
+		
+	}
+	
+	async GetPrivacy () {
+		
+	}
+	
+	async DeleteCharacter () {
+		
+	}
 }
 
 export class DashboardManager extends ProfileLibrary {

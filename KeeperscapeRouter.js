@@ -77,6 +77,23 @@ export default class KeeperscapeRouter {
 		return;
 	}
 	
+	async SendCharacterToIncarnation (req, res) {
+		var user = req.session.user;
+		var character = await this.kDatabase.GetCharacterByKey (req.params.characterKey);
+		
+		if (character.meta.ownerId != user._id) { res.redirect ('/'); return; }
+		
+		var page = await KeeperscapeTemplater.GetPage (path.join (this.directory, '/html/incarnation.html'));
+		page = KeeperscapeTemplater.GetFilledOutPage ({ 
+				data: {
+					'{{CHARACTER_JSON}}': JSON.stringify (character),
+				}, 
+				page
+			});
+		await this.SendPage ({req, res, page, tabTitle: 'Incarnation'});
+		return;
+	}
+	
 	AddRoutesToApp (app) {
 		app.route ('/').get ( 
 			(req, res) => {
@@ -100,13 +117,22 @@ export default class KeeperscapeRouter {
 			});
 		
 		app.route ('/incarnation').get ( 
-			(req, res) => { 
-				this.LoadAndSendPage ({req, res, localHtmlPageFilePath: '/html/incarnation.html', tabTitle: 'Incarnation'}); 
+			async (req, res) => { 
+				var page = await KeeperscapeTemplater.GetPage (path.join (this.directory, '/html/incarnation.html'));
+				page = KeeperscapeTemplater.GetFilledOutPage ({ 
+						data: {
+							'{{CHARACTER_JSON}}': "null",
+						}, 
+						page
+					});
+				await this.SendPage ({req, res, page, tabTitle: 'Incarnation'});
 			});
 		
-		app.route ('/incarnation/character/:characterId').get ( 
+		app.route ('/incarnation/character/:characterKey').get ( 
 			(req, res) => {
-				this.LoadAndSendPage ({req, res, localHtmlPageFilePath: '/html/incarnation.html', tabTitle: 'Incarnation'}); 
+				if (!req.session.user) { res.redirect ('/'); return; }
+				
+				this.SendCharacterToIncarnation (req, res);
 			});
 		
 		app.route ('/profile/:username').get ( (req, res) => { this.SendProfile (req, res) } );

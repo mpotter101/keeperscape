@@ -3,10 +3,13 @@ import { ProfileLibrary, CharacterCard } from '/profile/ProfileLibrary.js'
 class DashboardCard extends CharacterCard {
 	constructor ({character, node}) {
 		super({character, node});
+		
+		this.loadInEditorButton = this.node.find ('.character.button.load-in-editor');
+		this.loadInEditorButton.on ('click', () => { this.LoadCharacterInEditor (); });
 	}
 	
 	LoadCharacterInEditor () {
-		
+		window.location.href = "/incarnation/character/" + this.character._key;
 	}
 	
 	async GetPrivacy () {

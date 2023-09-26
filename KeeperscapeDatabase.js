@@ -64,6 +64,17 @@ export default class KeeperscapeDatabase {
 		return characters;
 	}
 	
+	async GetCharacterByKey (characterKey) {
+		var query = [
+			'FOR c IN ' + DB_COLLECTIONS_CHARACTERS,
+			'	FILTER c._key == "' + characterKey + '"',
+			'	RETURN c'
+		].join ('\n');
+		
+		var characters = await this.ExecuteQuery (query);
+		return characters [0];
+	}
+	
 	async AddCharacterToLibrary (user, character) {
 		var query = [
 			'FOR u IN ' + DB_COLLECTIONS_USERS,

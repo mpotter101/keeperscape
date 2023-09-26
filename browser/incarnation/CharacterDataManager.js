@@ -10,6 +10,10 @@ export default class CharacterDataManager {
 			onLoadFromJson: (e) => { this.LoadFromJson (e); },
 			onSaveToProfile: () => { this.SaveToProfile (); }
 		});
+		
+		if (window.characterJson) {
+			this.LoadFromJson ({value: window.characterJson});
+		}
 	}
 	
 	// Borrowed from here: http://www.4codev.com/javascript/download-save-json-content-to-local-file-in-javascript-idpx473668115863369846.html
@@ -22,39 +26,42 @@ export default class CharacterDataManager {
     }
 	
 	SaveToJson () {
-		var filesToSave = [];
+		var dataToSave = {};
 		var characterInfo = this.characterInfoForm.GetJson ();
+		dataToSave [this.characterInfoForm.name] = characterInfo;
 		
 		this.characterCreatorList.forEach (creator => {
 			var s = creator.state.Get();
-			this.Download (
-				JSON.stringify (s, null, 4),
-				characterInfo.characterName + '-' + s.name + '.json',
-			)
+			dataToSave [s.name] = s;
 		});
 		
 		this.Download (
-			JSON.stringify (characterInfo, null, 4),
-			characterInfo.characterName + '-' + 'character-info.json',
+			JSON.stringify (dataToSave, null, 4),
+			characterInfo.characterName + '-' + 'data.json',
 		)
 	}
 	
 	LoadFromJson ({value}) {
-		var json = JSON.parse (value);
+		var json = value;
+		if (typeof json == 'string') {
+			json = JSON.parse (value);	
+		}
 		
-		// Find which character creator the data belongs to
-		this.characterCreatorList.forEach (creator => {
-			var s = creator.state.Get();
-			if (s.name == json.name) {
-				creator.ImportJson ({json});
-				return;
+		Object.keys (json).forEach (key => {
+			// Find which character creator the data belongs to
+			this.characterCreatorList.forEach (creator => {
+				var s = creator.state.Get();
+				if (s.name == key) {
+					creator.ImportJson ({json: json [key]});
+					creator.RedrawScene();
+				}
+			});
+
+			// if we made it this far, we are probably loading in the character info
+			if (key == this.characterInfoForm.name) {
+				this.characterInfoForm.ImportJson ({json: json [key]});
 			}
 		});
-		
-		// if we made it this far, we are probably loading in the character info
-		if (json.name == this.characterInfoForm.name) {
-			this.characterInfoForm.ImportJson ({json});
-		}
 	}
 	
 	async SaveToProfile () {

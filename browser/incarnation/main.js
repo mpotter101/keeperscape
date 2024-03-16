@@ -2,42 +2,17 @@ import CharacterCreator from '/incarnation/CharacterCreator.js';
 import CharacterDataManager from '/incarnation/CharacterDataManager.js';
 
 $(window).on('load', () => {
-	window.app = new Incarnation(worldCharacterConfig, firstPersonConfig);
+	window.app = new Incarnation(defaultConfig);
 });
 
-function Incarnation (worldCharacterConfig, firstPersonConfig) {
-	var worldCharacterCreator = new CharacterCreator (worldCharacterConfig);
-	var firstPersonCharacterCreator = new CharacterCreator (firstPersonConfig);
-	var characterDataManager = new CharacterDataManager ({characterCreatorList: [worldCharacterCreator, firstPersonCharacterCreator]});
-	return { worldCharacterCreator, firstPersonCharacterCreator, characterDataManager}
-}
-	
-const firstPersonConfig = {
-	name: 'first-person-sprites',
-	canvasHeight: 512,
-	canvasWidth: 512,
-	defaultFrameDuration: 200,
-	formNode: $('#fps-form'),
-	canvasNode: $('#fps-canvas'),
-	animationsNode: $('#fps-animation-buttons'),
-	facingsNode: $('#fps-facings-buttons'),
-	canvasContainerNode: $('#fps-canvas-container'),
-	animationTitleNode: $('#fps-current-animation-label'),
-	animationNotesNode: $('#fps-current-animation-notes'),
-	facings: [ 'first-person' ],
-	animations: {
-		Idle: { notes: 'Plays while standing still or moving. Being able to see what your character is holding is recommended.' },
-		Attack: { notes: 'Your normal attack from the first-person perspective. The frame timings should align with the world sprite for the best effect.' },
-		Ability: { notes: 'What using your ability looks like from first person. Frame timings should align with respective world sprite animation for best effect.' },
-		Hurt: { notes: 'Plays when you get hurt while idle or moving.' },
-		KO: { notes: 'Plays when you are KO\'d. Plays in reverse when you are revived.' },
-		Emote1: { notes: 'Optional, Your emote1 from the first-person perspective. Only seen in game by you.' },
-		Emote2: { notes: 'Optional, your emote2 from the first-person perspective. Only seen in game by you.' },
-	}
+function Incarnation (defaultConfig) {
+	var spriteCreator = new CharacterCreator (defaultConfig);
+	var spriteDataManager = new CharacterDataManager ({characterCreatorList: [spriteCreator]});
+	return { spriteCreator, spriteDataManager}
 }
 
-const worldCharacterConfig = {
-	name: 'world-sprites',
+const defaultConfig = {
+	name: 'sprite',
     canvasHeight: 512,
     canvasWidth: 512,
     defaultFrameDuration: 200,
@@ -48,6 +23,7 @@ const worldCharacterConfig = {
 	canvasContainerNode: $('#canvas-container'),
 	animationTitleNode: $('#current-animation-label'),
 	animationNotesNode: $('#current-animation-notes'),
+	groups: ['world-sprites'],
 	facings: [
 		'towards',
 		'towards-left',

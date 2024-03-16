@@ -39,11 +39,11 @@ export default class KeeperscapeRouter {
 		var user = await this.kDatabase.GetUserByUsername (username);
 
 		if (user) {
-			var characters = await this.kDatabase.GetCharactersByOwner (user);
+			var sprites = await this.kDatabase.GetSpritesByOwner (user);
 			var page = await KeeperscapeTemplater.GetPage (path.join (this.directory, '/html/profile.html'));
 			page = KeeperscapeTemplater.GetFilledOutPage ({ 
 				data: {
-					'{{PROFILE_CHARACTERS}}': JSON.stringify (characters),
+					'{{PROFILE_SPRITES}}': JSON.stringify (sprites),
 					'{{PROFILE_DISPLAY_NAME}}': user.displayName,
 					'{{PROFILE_PROFILE_PICTURE}}': user.avatar
 				}, 
@@ -64,11 +64,11 @@ export default class KeeperscapeRouter {
 		var username = req.session.user.username;
 		var user = await this.kDatabase.GetUserByUsername (username);
 		
-		var characters = await this.kDatabase.GetCharactersByOwner (user);
+		var sprites = await this.kDatabase.GetSpritesByOwner (user);
 		var page = await KeeperscapeTemplater.GetPage (path.join (this.directory, '/html/dashboard.html'));
 		page = KeeperscapeTemplater.GetFilledOutPage ({ 
 				data: {
-					'{{DASHBOARD_CHARACTERS}}': JSON.stringify (characters),
+					'{{DASHBOARD_SPRITES}}': JSON.stringify (sprites),
 					'{{USERNAME}}': user.username
 				}, 
 				page
@@ -77,16 +77,16 @@ export default class KeeperscapeRouter {
 		return;
 	}
 	
-	async SendCharacterToIncarnation (req, res) {
+	async SendSpriteToIncarnation (req, res) {
 		var user = req.session.user;
-		var character = await this.kDatabase.GetCharacterByKey (req.params.characterKey);
+		var sprite = await this.kDatabase.GetSpriteByKey (req.params.spriteKey);
 		
-		if (character.meta.ownerId != user._id) { res.redirect ('/'); return; }
+		if (sprite.meta.ownerId != user._id) { res.redirect ('/'); return; }
 		
 		var page = await KeeperscapeTemplater.GetPage (path.join (this.directory, '/html/incarnation.html'));
 		page = KeeperscapeTemplater.GetFilledOutPage ({ 
 				data: {
-					'{{CHARACTER_JSON}}': JSON.stringify (character),
+					'{{SPRITE_JSON}}': JSON.stringify (sprite),
 				}, 
 				page
 			});
@@ -121,18 +121,18 @@ export default class KeeperscapeRouter {
 				var page = await KeeperscapeTemplater.GetPage (path.join (this.directory, '/html/incarnation.html'));
 				page = KeeperscapeTemplater.GetFilledOutPage ({ 
 						data: {
-							'{{CHARACTER_JSON}}': "null",
+							'{{SPRITE_JSON}}': "null",
 						}, 
 						page
 					});
 				await this.SendPage ({req, res, page, tabTitle: 'Incarnation'});
 			});
 		
-		app.route ('/incarnation/character/:characterKey').get ( 
+		app.route ('/incarnation/sprite/:spriteKey').get ( 
 			(req, res) => {
 				if (!req.session.user) { res.redirect ('/'); return; }
 				
-				this.SendCharacterToIncarnation (req, res);
+				this.SendSpriteToIncarnation (req, res);
 			});
 		
 		app.route ('/profile/:username').get ( (req, res) => { this.SendProfile (req, res) } );

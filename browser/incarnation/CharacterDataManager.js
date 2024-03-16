@@ -73,7 +73,7 @@ export default class CharacterDataManager {
 			character [s.name] = s;
 		});
 		
-		var response = await fetch('/api/v1/profile/' + window.username + '/character', {
+		var response = await fetch('/api/v1/profile/' + window.username + '/sprite', {
 			method: 'POST',
 			body: JSON.stringify(character),
 			headers: {'Content-type': 'application/json; charset=UTF-8'}

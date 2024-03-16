@@ -2,7 +2,7 @@ import { Database } from 'arangojs';
 
 const DB_NAME = 'keeperDB';
 const DB_COLLECTIONS_USERS = 'users';
-const DB_COLLECTIONS_CHARACTERS = 'characters';
+const DB_COLLECTIONS_SPRITES = 'sprites';
 
 // useing arango v8
 // https://arangodb.github.io/arangojs/8.1.0/index.html
@@ -53,34 +53,34 @@ export default class KeeperscapeDatabase {
 		return users [0];
 	}
 	
-	async GetCharactersByOwner (user) {
+	async GetSpritesByOwner (user) {
 		var query = [
-			'FOR c IN ' + DB_COLLECTIONS_CHARACTERS,
+			'FOR c IN ' + DB_COLLECTIONS_SPRITES,
 			'	FILTER c.meta.ownerId == "' + user._id + '"',
 			'	RETURN c'
 		].join ('\n');
 		
-		var characters = await this.ExecuteQuery (query);
-		return characters;
+		var sprites = await this.ExecuteQuery (query);
+		return sprites;
 	}
 	
-	async GetCharacterByKey (characterKey) {
+	async GetSpriteByKey (spriteKey) {
 		var query = [
-			'FOR c IN ' + DB_COLLECTIONS_CHARACTERS,
-			'	FILTER c._key == "' + characterKey + '"',
+			'FOR c IN ' + DB_COLLECTIONS_SPRITES,
+			'	FILTER c._key == "' + spriteKey + '"',
 			'	RETURN c'
 		].join ('\n');
 		
-		var characters = await this.ExecuteQuery (query);
-		return characters [0];
+		var sprites = await this.ExecuteQuery (query);
+		return sprites [0];
 	}
 	
-	async AddCharacterToLibrary (user, character) {
+	async AddSpriteToLibrary (user, sprite) {
 		var query = [
 			'FOR u IN ' + DB_COLLECTIONS_USERS,
 			'	FILTER u.username == "' + user.username + '"',
 			'	LIMIT 1',
-			'	LET newLibrary = PUSH(u.library, "' + character._id + '")',
+			'	LET newLibrary = PUSH(u.library, "' + sprite._id + '")',
 			'	UPDATE u WITH { library: newLibrary } IN ' + DB_COLLECTIONS_USERS,
 			'		RETURN u',
 		].join ('\n');
@@ -95,12 +95,12 @@ export default class KeeperscapeDatabase {
 		return results [0];
 	}
 	
-	async RemoveCharacterFromLibrary (user, character) {
+	async RemoveSpriteFromLibrary (user, sprite) {
 		var query = [
 			'FOR u IN ' + DB_COLLECTIONS_USERS,
 			'	FILTER u.username == "' + user.username + '"',
 			'	LIMIT 1',
-			'	LET newLibrary = MINUS(u.library, ["' + character._id + '"])',
+			'	LET newLibrary = MINUS(u.library, ["' + sprite._id + '"])',
 			'	UPDATE u WITH { library: newLibrary } IN ' + DB_COLLECTIONS_USERS,
 			'		RETURN u',
 		].join ('\n');
@@ -118,19 +118,35 @@ export default class KeeperscapeDatabase {
 	async EnsureArchitecture () {
 		try {
 			this.database = await new Database({databaseName: DB_NAME});
-			this.collections.users = await this.database.collection (DB_COLLECTIONS_USERS);
-			this.collections.characters = await this.database.collection (DB_COLLECTIONS_CHARACTERS);
 		}
 		catch (err) {
 			console.log (err.message);
 			return false;
 		}
 		
-		// make sure collection exists
-		try { await this.collections.users.create(); } catch (err) {}
-		try { await this.collections.characters.create(); } catch (err) {}
+		let collectionNames = await this.database.listCollections();
 		
+		await this.PrepareCollection (collectionNames, DB_COLLECTIONS_USERS);
+		await this.PrepareCollection (collectionNames, DB_COLLECTIONS_SPRITES);
 		return true;
+	}
+	
+	// Expected data in collectionNamesList
+	// https://arangodb.github.io/arangojs/latest/modules/_collection_.html#collectionmetadata
+	async PrepareCollection(collectionNamesList, name) {
+		// store a collections object
+		this.collections [name] = this.database.collection(name);
+		
+		// check if the collection has been created
+		let foundName = false;
+		collectionNamesList.forEach ( (collectionMetaData) => {
+			if (collectionMetaData.name == name) { foundName = true }
+		})
+		
+		// create it if it hasn't
+		if (!foundName) {
+			await this.collections [name].create();
+		}
 	}
 	
 	UpdateSession (req, updatedUser) {
@@ -139,28 +155,28 @@ export default class KeeperscapeDatabase {
 	}
 	
 	AddRoutes (app) {
-		app.route ('/api/v1/profile/:username/character')
+		app.route ('/api/v1/profile/:username/sprite')
 			.post (async (req, res) => {
 				if (!req.session || !req.session.user || !req.session.user._id) { 
-					res.send (JSON.stringify ({error: 'must be logged in to create a character'}));
+					res.send (JSON.stringify ({error: 'must be logged in to create a sprite'}));
 					return;
 				}
 							  
-				var characterToSave = req.body;
+				var spriteToSave = req.body;
 				
-				characterToSave.meta = {
+				spriteToSave.meta = {
 					ownerId: req.session.user._id
 				}
 			
 				try {
-					var result = await this.collections.characters.save (characterToSave);
+					var result = await this.collections.sprites.save (spriteToSave);
 					
 					if (result._id) {
-						var updatedUser = await this.AddCharacterToLibrary(req.session.user, result);
+						var updatedUser = await this.AddSpriteToLibrary(req.session.user, result);
 						this.UpdateSession (req, updatedUser);
 						res.send (JSON.stringify(
 							{
-								success: {message: 'Character saved!'}, 
+								success: {message: 'Sprite saved!'}, 
 								redirect: '/profile/' + req.session.user.username
 							}
 						));
@@ -173,24 +189,24 @@ export default class KeeperscapeDatabase {
 				}
 			});
 		
-		app.route ('/api/v1/character/:characterKey/library')
+		app.route ('/api/v1/sprites/:spriteKey/library')
 			.put (async (req, res) => {
 				if (!req.session || !req.session.user || !req.session.user._id) { 
-					res.send (JSON.stringify ({error: 'must be logged in to add a character to your library'}));
+					res.send (JSON.stringify ({error: 'must be logged in to add a sprite to your library'}));
 					return;
 				}
 			
 				var user = req.session.user;
-				var character = { _id: DB_COLLECTIONS_CHARACTERS + '/' + req.params.characterKey }
+				var sprite = { _id: DB_COLLECTIONS_SPRITES + '/' + req.params.spriteKey }
 				
 				try {
-					var updatedUser = await this.AddCharacterToLibrary(user, character);
+					var updatedUser = await this.AddSpriteoLibrary(user, sprite);
 					this.UpdateSession (req, updatedUser);
-					if (updatedUser.library.includes (character._id)) {
-						res.send (JSON.stringify ({success: 'character added to library', user: updatedUser}));
+					if (updatedUser.library.includes (sprite._id)) {
+						res.send (JSON.stringify ({success: 'sprite added to library', user: updatedUser}));
 					}
 					else {
-						res.send (JSON.stringify ({error: 'failed to add character to library'}));
+						res.send (JSON.stringify ({error: 'failed to add sprite to library'}));
 					}
 				}
 				catch (err) {
@@ -199,21 +215,21 @@ export default class KeeperscapeDatabase {
 			})
 			.delete (async (req, res) => {
 				if (!req.session || !req.session.user || !req.session.user._id) { 
-					res.send (JSON.stringify ({error: 'must be logged in to remove a character to your library'}));
+					res.send (JSON.stringify ({error: 'must be logged in to remove a sprite to your library'}));
 					return;
 				}
 			
 				var user = req.session.user;
-				var character = { _id: DB_COLLECTIONS_CHARACTERS + '/' + req.params.characterKey }
+				var sprite = { _id: DB_COLLECTIONS_SPRITES + '/' + req.params.spriteKey }
 				
 				try {
-					var updatedUser = await this.RemoveCharacterFromLibrary(user, character);
+					var updatedUser = await this.RemoveCharacterFromLibrary(user, sprite);
 					this.UpdateSession (req, updatedUser);
-					if (!updatedUser.library.includes (character._id)) {
-						res.send (JSON.stringify ({success: 'character removed to library', user: updatedUser}));
+					if (!updatedUser.library.includes (sprite._id)) {
+						res.send (JSON.stringify ({success: 'sprite removed to library', user: updatedUser}));
 					}
 					else {
-						res.send (JSON.stringify ({error: 'failed to add character to library'}));
+						res.send (JSON.stringify ({error: 'failed to add sprite to library'}));
 					}
 				}
 				catch (err) {

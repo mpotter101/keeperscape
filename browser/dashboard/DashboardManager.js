@@ -9,7 +9,7 @@ class DashboardCard extends CharacterCard {
 	}
 	
 	LoadCharacterInEditor () {
-		window.location.href = "/incarnation/character/" + this.character._key;
+		window.location.href = "/incarnation/sprite/" + this.character._key;
 	}
 	
 	async GetPrivacy () {

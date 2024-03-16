@@ -31,13 +31,13 @@ export class CharacterCard {
 		var response;
 		
 		if (this.inLibrary) {
-			response = await fetch('/api/v1/character/' + this.character._key + '/library', {
+			response = await fetch('/api/v1/sprite/' + this.character._key + '/library', {
 				method: 'DELETE',
 				headers: {'Content-type': 'application/json; charset=UTF-8'}
 			});
 		}
 		else {
-			response = await fetch('/api/v1/character/' + this.character._key + '/library', {
+			response = await fetch('/api/v1/sprite/' + this.character._key + '/library', {
 				method: 'PUT',
 				headers: {'Content-type': 'application/json; charset=UTF-8'}
 			});
@@ -72,7 +72,7 @@ export class CharacterCard {
 		if (this.currentFacingIndex >= this.facings.length) { this.currentFacingIndex = 0; }
 		this.currentFacing = this.facings [this.currentFacingIndex];
 		this.currentAnimation = this.animationName + '-' + this.currentFacing;
-		this.imageNode [0].src = this.character ['world-sprites'].frames [this.currentAnimation] [0].src;
+		this.imageNode [0].src = this.character ['sprite'].frames [this.currentAnimation] [0].src;
 	}
 }
 

@@ -46,7 +46,7 @@ p {
 	flex: 1;
 }
 
- .ui.button {
+.ui.button {
 	 background-color: #1b1a20;
 	 border: solid 1px #939393;
 	 border-radius: 0;
@@ -118,4 +118,15 @@ p {
 
 .frame-data-form .ui {
 	margin-top: 0.6em;
+}
+
+#crud-form > div {
+	display: inline-block;
+	margin: 0 1em 0 0;
+}
+
+#crud-form .ui.header, 
+#crud-form .ui.label-input,
+#crud-form input {
+	width: 100%;
 }

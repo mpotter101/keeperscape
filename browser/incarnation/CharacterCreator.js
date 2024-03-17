@@ -17,6 +17,12 @@ class Frame {
 	}
 }
 
+class AnimationGroup {
+	// Takes parent, notes, animations, and facings
+	// handles hiding/showing its related buttons
+	constructor () {}
+}
+
 class ExportableState {
 	constructor (data) {
 		this.state = {...data}
@@ -47,11 +53,13 @@ export default class CharacterCreator {
 		defaultFrameDuration,
 		formNode,
 		canvasNode,
+		groupsNode,
 		animationsNode,
 		facingsNode,
 		canvasContainerNode,
 		animationTitleNode,
 		animationNotesNode,
+		groups,
 		facings,
 		animations,
 	}) {
@@ -68,6 +76,7 @@ export default class CharacterCreator {
 		// setup constant ui
 		this.formNode = formNode;
 		this.canvasNode = canvasNode;
+		this.groupsNode = groupsNode;
 		this.animationsNode = animationsNode;
 		this.facingsNode = facingsNode;
 		this.canvasContainerNode = canvasContainerNode;
@@ -144,10 +153,29 @@ export default class CharacterCreator {
 		// END OF FORM UI
 
 		// create ui based on config
+		var keys;
+		
+		// GROUP SELECTION UI
+		this.groupButtons = [];
+		this.groupNotes = {};
+		keys = Object.keys (groups);
+		for (var key in keys)
+		{
+			var item = groups [keys [key]];
+			this.groupButtons.push (new Button ({
+				parent: this.groupsNode,
+				label: keys [key],
+				onClick: (e) => { this. },
+				notes: item.notes,
+				name: keys [key]
+			})
+		}
+		
+		
 		// ANIMATION SELECTION UI 
 		this.animationNotes = {};
 		this.animationButtons = [];
-		var keys = Object.keys (animations);
+		keys = Object.keys (animations);
 		for (var key in keys)
 		{
 			var item = animations [keys [key]];
@@ -163,6 +191,7 @@ export default class CharacterCreator {
 		}
 		
 		this.animationButtons [0].node.addClass ('active');
+
 
 		this.facingButtons = [];
 		for (var key in facings) {
@@ -311,6 +340,14 @@ export default class CharacterCreator {
 		var frame = this.GetCurrentFrame ();
 		
 		if (frame && frame.image) { return frame.image }
+	}
+	
+	ChangeGroup ({event, node, target}) {
+		sthis.state.Set ({currentGroup: target.name});
+		
+		this.groupButtons.forEach (button => {
+			button.node.removeClass ('active');
+		})
 	}
 	
 	ChangeAnimation ({event, node, target}) {

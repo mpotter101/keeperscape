@@ -8,74 +8,38 @@ export default class CharacterInfoForm {
 		this.crudFormNode = $('#crud-form');
 		this.name = name;
 		
-		this.characterNameInput = new LabeledInput ({
+		this.spriteNameInput = new LabeledInput ({
 			parent: this.crudFormNode,
-			class: 'ui character-name',
+			class: 'ui sprite-name',
 			onInput: (e) => {  },
-			label: { content: 'Character Name' }
+			label: { content: 'Sprite Name' }
 		})
 		
-		this.characterNameInput.setValue ('Vagrant');
-		
-		this.characterDescriptionInput = new LabeledInput ({
+		this.spriteTagsInput = new LabeledInput ({
 			parent: this.crudFormNode,
-			class: 'ui character-description',
+			class: 'ui sprite-tags',
 			onInput: (e) => {  },
-			label: { content: 'Character Description - This is just for fun. Other people will be able to see this.' }
+			label: { content: 'Tags - Comma separated' }
 		})
 		
-		this.characterSize = new InputSlider ({
-				parent: this.crudFormNode,
-				class: 'ui character-height-selector',
-				onSlider: (data) => {  },
-				onInput: (data) => {  },
-				label: {
-					class: 'ui label',
-					content: 'Character Height - Adjusts your world sprite size and first person camera height'
-				},
-				slider: {
-					prop: {
-						min: 0.6,
-						max: 1.6,
-						value: 1,
-						step: 0.1
-					}
-				}
-			});
-		
-		this.characterSize.setValue (1);
-		
-		this.attackStyleDropdown = new Dropdown ({
-			class: 'ui attack-dropdown',
+		this.spriteDescriptionInput = new LabeledInput ({
 			parent: this.crudFormNode,
-			options: ['Melee', 'Ranged'],
-		})
-		
-		this.attackDamageTypeDropdown = new Dropdown ({
-			class: 'ui damage-dropdown',
-			parent: this.crudFormNode,
-			options: ['Mundane', 'Energy', 'Divine'],
-		})
-		
-		this.abilityDropdown = new Dropdown ({
-			class: 'ui ability-dropdown',
-			parent: this.crudFormNode,
-			options: ['Block', 'Charge', 'Heavy Ranged Attack', 'Hide In Shadows', 'Sprint', 'Charm'],
+			class: 'ui sprite-description',
+			onInput: (e) => {  },
+			label: { content: 'Description' }
 		})
 	}
 	
 	GetJson() {
 		return {
 			name: this.name,
-			characterName: this.characterNameInput.getValue (),
-			description: this.characterDescriptionInput.getValue (),
-			size: this.characterSize.getValue (),
-			attackStyle: this.attackStyleDropdown.getValue (),
-			ability: this.abilityDropdown.getValue ()
+			spriteName: this.spriteNameInput.getValue (),
+			description: this.spriteDescriptionInput.getValue (),
+			tags: this.spriteTagsInput.getValue ()
 		}
 	}
 	
 	ImportJson ({json}) {
-		
+		console.log ('here?', json);
 	}
 }

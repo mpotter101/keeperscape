@@ -20,7 +20,98 @@ class Frame {
 class AnimationGroup {
 	// Takes parent, notes, animations, and facings
 	// handles hiding/showing its related buttons
-	constructor () {}
+	constructor ({name, parent, app, group, animationsNode, facingsNode}) {
+		this.active = false;
+		this.app = app;
+		this.name = name;
+		this.parent = parent;
+		this.group = group;
+		this.animationsNode = animationsNode;
+		this.facingsNode = facingsNode;
+		this.width = group.width;
+		this.height = group.height;
+		
+		this.button = new Button ({
+			parent,
+			label: this.name,
+			onClick: (e) => { this.app.ChangeGroup (e, this); },
+			notes: this.group.notes,
+			name: this.name
+		})
+		
+		// ANIMATION SELECTION UI 
+		this.animationNotes = {};
+		this.animationButtons = [];
+		var keys = Object.keys (this.group.animations);
+		for (var key in keys)
+		{
+			var item = this.group.animations [keys [key]];
+			var animationButton = new Button ({
+				parent: this.animationsNode,
+				label: keys [key],
+				onClick: (e) => { this.app.ChangeAnimation (e); },
+				notes: item.notes,
+				name: keys [key]
+			})
+			
+			animationButton.node.addClass('hidden');
+			
+			this.animationButtons.push (animationButton);
+			this.animationNotes [keys [key]] = item.notes
+		}
+		
+		this.animationButtons [0].node.addClass ('active');
+
+
+		this.facingButtons = [];
+		for (var key in this.group.facings) {
+			let facingButton = new Button ({
+				parent: this.facingsNode,
+				label: this.group.facings [key],
+				onClick: (e) => { this.app.ChangeFacing (e); },
+				name: this.group.facings [key]
+			})
+			
+			facingButton.node.addClass ('hidden');
+			this.facingButtons.push (facingButton)
+			
+		}
+		
+		this.facingButtons [0].node.addClass ('active');
+		
+		// Prepare every possible animation
+		this.animationButtons.forEach ((animationButton) => {
+			this.facingButtons.forEach ((facingButton) => {
+				var keyName = this.name + '-' + animationButton.name + '-' + facingButton.name;
+				this.app.state.Assign ('frames', { [keyName]: [] });
+			});
+		});
+	}
+
+	SetActive(isActive) {
+		if (isActive) {
+			this.button.node.addClass ('active');
+			this.RemoveClassFromButtons (this.animationButtons, 'hidden');
+			this.RemoveClassFromButtons (this.facingButtons, 'hidden');
+		}
+		else {
+			this.button.node.removeClass ('active');
+			this.AddClassToButtons (this.animationButtons, 'hidden');
+			this.AddClassToButtons (this.facingButtons, 'hidden');
+		}
+	}
+	
+	AddClassToButtons (buttons, className) {
+		buttons.forEach ((button) => {
+			button.node.addClass(className);
+		})
+	}
+	
+	RemoveClassFromButtons(buttons, className) {
+		buttons.forEach ((button) => {
+			button.node.removeClass(className);
+		})
+	}
 }
 
 class ExportableState {
@@ -65,6 +156,7 @@ export default class CharacterCreator {
 	}) {
 		this.state = new ExportableState ({ 
 				name,
+				currentGroup: '',
 				currentAnimation: '', 
 				currentFacing: '',
 				currentFrame: 1,
@@ -82,6 +174,7 @@ export default class CharacterCreator {
 		this.canvasContainerNode = canvasContainerNode;
 		this.animationTitleNode = animationTitleNode;
 		this.animationNotesNode = animationNotesNode;
+		this.currentGroup
 		
 		this.canvas = new Canvas ({
             parent: this.canvasContainerNode,
@@ -157,72 +250,36 @@ export default class CharacterCreator {
 		
 		// GROUP SELECTION UI
 		this.groupButtons = [];
-		this.groupNotes = {};
 		keys = Object.keys (groups);
 		for (var key in keys)
 		{
 			var item = groups [keys [key]];
-			this.groupButtons.push (new Button ({
+			var group = new AnimationGroup ({
 				parent: this.groupsNode,
-				label: keys [key],
-				onClick: (e) => { this. },
-				notes: item.notes,
-				name: keys [key]
-			})
-		}
-		
-		
-		// ANIMATION SELECTION UI 
-		this.animationNotes = {};
-		this.animationButtons = [];
-		keys = Object.keys (animations);
-		for (var key in keys)
-		{
-			var item = animations [keys [key]];
-			this.animationButtons.push (new Button ({
-				parent: this.animationsNode,
-				label: keys [key],
-				onClick: (e) => { this.ChangeAnimation (e); },
-				notes: item.notes,
-				name: keys [key]
-			}))
+				name: keys [key],
+				app: this,
+				group: item,
+				animationsNode: this.animationsNode,
+				facingsNode: this.facingsNode
+			});
 			
-			this.animationNotes [keys [key]] = item.notes
+			group.SetActive(false);
+			
+			this.groupButtons.push (group)
 		}
 		
-		this.animationButtons [0].node.addClass ('active');
-
-
-		this.facingButtons = [];
-		for (var key in facings) {
-			this.facingButtons.push (new Button ({
-				parent: this.facingsNode,
-				label: facings [key],
-				onClick: (e) => { this.ChangeFacing (e); },
-				name: facings [key]
-			}))
-		}
-		
-		this.facingButtons [0].node.addClass ('active');
 		// END OF ANIMATION SELECTION UI
 		
 		// Setting up Character Creator
 		//Set default animation so we can see something if we are loading
 		this.state.Set ({
-			currentAnimation: this.animationButtons [0].name,
-			currentFacing: this.facingButtons [0].name
+			currentGroup: this.groupButtons [0].name,
+			currentAnimation: this.groupButtons [0].animationButtons [0].name,
+			currentFacing: this.groupButtons [0].facingButtons [0].name
 		});
 		
-		// Prepare every possible animation
-		this.animationButtons.forEach ((animationButton) => {
-			this.facingButtons.forEach ((facingButton) => {
-				var keyName = animationButton.name + '-' + facingButton.name;
-				this.state.Assign ('frames', { [keyName]: [] });
-			});
-		});
-		
+		this.ChangeGroup({}, this.groupButtons[0]);
 		this.UpdateTitleAndNotes();
-		this.OnStateChange();
 		this.Update();
 	}
 	
@@ -241,10 +298,7 @@ export default class CharacterCreator {
 			});
 		});
 		
-		var animBtn = this.animationButtons [0];
-		var faceBtn = this.facingButtons [0];
-		this.ChangeAnimation ({node: animBtn.node, target: animBtn, value: animBtn.name});
-		this.ChangeFacing ({node: faceBtn.node, target: faceBtn, value: faceBtn.name});
+		this.ChangeGroup({}, this.groupButtons[0]);
 		this.UpdateFrameSelector();
 		this.RedrawScene();
 	}
@@ -286,14 +340,13 @@ export default class CharacterCreator {
 		var facingName = s.currentFacing;
 		
 		this.animationTitleNode.html(animName + ' ' + facingName);
-		this.animationNotesNode.html(this.animationNotes [animName]);
+		this.animationNotesNode.html(this.currentGroup.animationNotes [animName]);
 	}
 	
 	UpdateFrameSelector () {
 		var s = this.state.Get();
 		var animName = this.GetCurrentAnimationName ();
-		
-		this.frameSelector.slider.setMaxValue (s.frames [animName].length);
+		this.frameSelector.slider.setMaxValue (Math.max (s.frames [animName].length, 1));
 		this.frameSelector.setValue (1);
 		this.frameSelector.label.setContent ('Frame Selection : Frame Count (' + s.frames [animName].length + ')');
 	}
@@ -317,7 +370,7 @@ export default class CharacterCreator {
 	
 	GetCurrentAnimationName () {
 		var s = this.state.Get()
-		return s.currentAnimation + '-' + s.currentFacing
+		return s.currentGroup + '-' + s.currentAnimation + '-' + s.currentFacing
 	}
 	
 	GetFrameCountOfCurrentAnimation () {
@@ -342,18 +395,32 @@ export default class CharacterCreator {
 		if (frame && frame.image) { return frame.image }
 	}
 	
-	ChangeGroup ({event, node, target}) {
-		sthis.state.Set ({currentGroup: target.name});
+	ChangeGroup ({event, node, target}, group) {
+		this.state.Set ({currentGroup: group.name});
+		this.currentGroup = group;
 		
-		this.groupButtons.forEach (button => {
-			button.node.removeClass ('active');
+		this.groupButtons.forEach (group => {
+			group.SetActive (false);
 		})
+		
+		this.currentGroup.SetActive (true);
+		
+		this.state.Set ({
+			currentAnimation: this.currentGroup.animationButtons [0].name,
+			currentFacing: this.currentGroup.facingButtons [0].name,
+			currentFrame: 1
+		});
+		
+		this.width = this.currentGroup.width;
+		this.height = this.currentGroup.height;
+		this.canvas.node.prop ({ width: this.width, height: this.height })		
+		this.OnStateChange();
 	}
 	
 	ChangeAnimation ({event, node, target}) {
 		this.state.Set ({currentAnimation: target.name});
 		
-		this.animationButtons.forEach (button => {
+		this.currentGroup.animationButtons.forEach (button => {
 			button.node.removeClass ('active');
 		});
 		
@@ -365,7 +432,7 @@ export default class CharacterCreator {
 	ChangeFacing ({event, node, target}) {
 		this.state.Set ({currentFacing: target.name});
 		
-		this.facingButtons.forEach (button => {
+		this.currentGroup.facingButtons.forEach (button => {
 			button.node.removeClass ('active');
 		});
 		

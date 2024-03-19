@@ -24,9 +24,12 @@ const defaultConfig = {
 	canvasContainerNode: $('#canvas-container'),
 	animationTitleNode: $('#current-animation-label'),
 	animationNotesNode: $('#current-animation-notes'),
+		
 	groups: {
-		World: { 
-			notes: 'The sprites that other people see.' 
+		World: {
+			width: 512,
+			height: 1024,
+			notes: 'The sprites that other people see.',
 			animations: {
 				Idle: { notes: 'Plays when you are standing still and doing nothing. Loops.' },
 				Movement: { notes: 'Plays when you are moving.' },
@@ -48,7 +51,9 @@ const defaultConfig = {
 				'towards-right'
 			],
 		},
-		FirstPerson: { 
+		FirstPerson: {
+			width: 1024,
+			height: 512,
 			notes: 'Sprites for your first-person view such as bare hands or first-person emotes.',
 			animations: {
 				BareHandLeftIdle: { notes: 'For when your character has nothing in their left hand.' },
@@ -56,7 +61,9 @@ const defaultConfig = {
 			},
 			facings: [ 'first-person' ],
 		},
-		Ui: { 
+		Ui: {
+			width: 512,
+			height: 512,
 			notes: 'Sprites for UI elements such as a doom-like face cam.',
 			animations: {
 				faceIdle: { notes: 'Characters face when nothing is happening' },
@@ -66,7 +73,5 @@ const defaultConfig = {
 			},
 			facings: [ 'ui' ]
 		}
-	},
-	
-    
+	}
 }

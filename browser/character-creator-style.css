@@ -8,6 +8,10 @@ p {
 	margin-bottom: 0.2em;
 }
 
+.hidden {
+	display: none !important;
+}
+
 .container {
 	padding: 1em;
 }

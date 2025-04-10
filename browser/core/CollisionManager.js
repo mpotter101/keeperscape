@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import ThreeHelper from '/core/ThreeHelper.js';
 import HashTable from '/core/HashTable.js';
 
 export class Collider {
@@ -50,5 +49,4 @@ export default class CollisionManager {
 		var hashTableEntity = this.hashTable.RegisterNewHashTableEntity ({radius, position, parent});
 		return new Collider ({hashTableEntity, collisionManager: this});
 	}
-	// CheckEntityForCollision
 }

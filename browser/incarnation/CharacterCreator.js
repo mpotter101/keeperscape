@@ -145,6 +145,7 @@ export default class CharacterCreator {
 		formNode,
 		canvasNode,
 		groupsNode,
+		groupFieldsNode,
 		animationsNode,
 		facingsNode,
 		canvasContainerNode,
@@ -169,6 +170,7 @@ export default class CharacterCreator {
 		this.formNode = formNode;
 		this.canvasNode = canvasNode;
 		this.groupsNode = groupsNode;
+		this.groupFieldsNode = groupFieldsNode;
 		this.animationsNode = animationsNode;
 		this.facingsNode = facingsNode;
 		this.canvasContainerNode = canvasContainerNode;
@@ -189,6 +191,24 @@ export default class CharacterCreator {
 		this.height = canvasHeight;
 
 		// FORM UI
+		this.groupWidthField = new LabeledInput ({
+			parent: this.groupFieldsNode,
+			class: 'ui group field input',
+			label: { content: 'Group Width', class: 'ui label' },
+			onInput: (data) => { }
+		})
+		
+		this.groupWidthField.setValue(this.width);
+		
+		this.groupHeightField = new LabeledInput ({
+			parent: this.groupFieldsNode,
+			class: 'ui group field input',
+			label: { content: 'Group Height', class: 'ui label' },
+			onInput: (data) => { }
+		})
+		
+		this.groupHeightField.setValue(this.height);
+		
 		this.imageLoader = new ImageInput ({
 			parent: this.formNode,
 			onImage: (data) => { data.value = [data.value]; this.HandleMultipleImages (data); },

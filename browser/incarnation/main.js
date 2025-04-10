@@ -19,6 +19,7 @@ const defaultConfig = {
 	formNode: $('#form'),
 	canvasNode: $('#canvas'),
 	groupsNode: $('#group-buttons'),
+	groupFieldsNode: $('#group-fields'),
 	animationsNode: $('#animation-buttons'),
 	facingsNode: $('#facings-buttons'),
 	canvasContainerNode: $('#canvas-container'),

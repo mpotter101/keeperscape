@@ -1,3 +1,6 @@
+2024 feb 18
+	[ ] Looking at this again and need to figure out a more simple syntax for creating collidable entities.
+
 Backlog:
 	[ ] Figure out how to reach arango front-end via 0.0.0.0 instead of only localhost
 	[ ] Figure out how to change which port the arango front-end runs on

@@ -30,6 +30,7 @@ export default class CharacterDataManager {
 		var characterInfo = this.characterInfoForm.GetJson ();
 		dataToSave [this.characterInfoForm.name] = characterInfo;
 		
+		// this is outdated support for when there was more than one sprite creator on the page.
 		this.characterCreatorList.forEach (creator => {
 			var s = creator.state.Get();
 			dataToSave [s.name] = s;
